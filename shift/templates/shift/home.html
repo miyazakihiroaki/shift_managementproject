@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1>{{object.user.clerkname}}さんの個別ページです。</h1>
+<h1>{{object.user.clerkname}}さんの個別ページ（仮）です。</h1>
 
 <h5>課題</h5>
-{% comment %} <p>出勤の表示。管理者側にはモデルは登録されている。views.pyの100行目と101行目が関係していると予想</p> {% endcomment %}
-<p>特定の日時に入っている人数の取得</p>
-<p>url</p>
+<p>特定の日時に入っている人数の取得完了→それを個人のマイページに表示させる</p>
+<p>規定人数に達するとその旨を表示する</p>
+<p>urlの決め方。ログイン完了後に'mypage'に遷移させるときのurlはどのように決定できるのか</p>
+<p>Userrモデルからrequest.userを取得する方法</p>
 
 
 

@@ -44,7 +44,7 @@ def shop_info(request):
     context = {'object':info}
     return render(request, 'shift/shop_info.html', context)
 
-########################################################################################3
+
 #カレンダー関係
 class MyPageView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
@@ -66,8 +66,10 @@ class MyPageView(LoginRequiredMixin, View):
         #1時間当たりシフトに入る人数を取得
         staff_per_hour = Shop_info.objects.get().people_per_hour
         
-        calendar = {}
-        # 営業開始時刻～営業終了時刻
+        calendar1 = {}#全体集計用
+        calendar2 = {}#各個人（ログインユーザー）集計用
+        
+        # 営業開始時刻～営業終了時刻までのカレンダー作成
         for hour in range(store_start_time.hour, store_end_time.hour+1):
             
             if time(hour=hour, minute=0) <= store_end_time:
@@ -78,17 +80,38 @@ class MyPageView(LoginRequiredMixin, View):
                 if minute_str == "0":
                     minute_str = "00"
                 hour_minute = hour_str + ":" + minute_str
-                row = {}
+                row1 = {}
                 for day in days:
-                    row[day] = ""
-                calendar[hour_minute] = row
+                    row1[day] = ""
+                row2 = {}
+                for day in days:
+                    row2[day] = ""
+                calendar1[hour_minute] = row1
+                calendar2[hour_minute] = row2
                 
         start_time = make_aware(datetime.combine(start_day, store_start_time))
         end_time = make_aware(datetime.combine(end_day, store_end_time))
-        # booking_data = staff_data.exclude(Q(workingtime__gt=end_time) | Q(workingtime__lt=start_time))
-        booking_data = Shift.objects.exclude(Q(workingtime__gt=end_time) | Q(workingtime__lt=start_time))
+        booking_data1 = Shift.objects.exclude(Q(workingtime__gt=end_time) | Q(workingtime__lt=start_time))
+        booking_data2 = staff_data.exclude(Q(workingtime__gt=end_time) | Q(workingtime__lt=start_time))
         
-        for booking in booking_data:
+        
+       
+        
+        
+        for booking in booking_data2:
+            local_time = localtime(booking.workingtime)
+            booking_date = local_time.date()
+            booking_hour = str(local_time.hour)
+            if len(booking_hour) == 1:
+                    booking_hour = "0" + booking_hour
+            booking_minute = str(local_time.minute)
+            if booking_minute == "0":
+                booking_minute = "00"
+            booking_hour_minute = booking_hour + ":" + booking_minute
+            if (booking_hour_minute in calendar2) and (booking_date in calendar2[booking_hour_minute]):
+                calendar2[booking_hour_minute][booking_date] = "出勤"
+        
+        for booking in booking_data1:
             local_time = localtime(booking.workingtime)
             number = Shift.objects.filter(workingtime = local_time).count()
             booking_date = local_time.date()
@@ -99,10 +122,11 @@ class MyPageView(LoginRequiredMixin, View):
             if booking_minute == "0":
                 booking_minute = "00"
             booking_hour_minute = booking_hour + ":" + booking_minute
-            calendar[booking_hour_minute][booking_date] = str(number)
-            if int(calendar[booking_hour_minute][booking_date]) >= int(staff_per_hour):
-                calendar[booking_hour_minute][booking_date] = "既定人数到達" 
-        
+            calendar1[booking_hour_minute][booking_date] = str(number)
+            if int(calendar1[booking_hour_minute][booking_date]) >= int(staff_per_hour):
+                calendar1[booking_hour_minute][booking_date] = "既定人数到達" 
+                calendar2[booking_hour_minute][booking_date] = "既定人数到達" 
+            
         # for booking in booking_data:
         #     local_time = localtime(booking.workingtime)
         #     # number = Shift.objects.filter(user = request.user, workingtime = local_time).count()
@@ -126,8 +150,9 @@ class MyPageView(LoginRequiredMixin, View):
             'staff_data': staff_data,
             'staff_name_data': staff_name_data,
             'people_per_hour': staff_per_hour,
-            'booking_data': booking_data,
-            'calendar': calendar,
+            'booking_data1': booking_data1,
+            'calendar1': calendar1,
+            'calendar2': calendar2,
             'days': days,
             'start_day': start_day,
             'end_day': end_day,
@@ -142,6 +167,7 @@ class MyPageView(LoginRequiredMixin, View):
         return render(request, 'shift/mypage.html',context )
         
 
+#出勤時間登録
 @require_POST
 def Holiday(request, year, month, day, hour_minute):
     staff_data = Shift.objects.filter(user=request.user)[0]
@@ -151,7 +177,7 @@ def Holiday(request, year, month, day, hour_minute):
     start_time = make_aware(datetime(year=year, month=month, day=day, hour=hour, minute=minute))
     end_time = make_aware(datetime(year=year, month=month, day=day, hour=hour, minute=minute) + timedelta(minutes=booking_unit))
 
-    # 勤務可能日追加
+    # 出勤時間をShiftモデルに追加
     Shift.objects.create(
         user = staff_data.user,
         workingtime=start_time,
@@ -165,6 +191,7 @@ def Holiday(request, year, month, day, hour_minute):
     return redirect('shift:mypage', year=start_date.year, month=start_date.month, day=start_date.day)
 
 
+#出勤時間消去
 @require_POST
 def Delete(request, year, month, day, hour_minute):
     hour = int(hour_minute[0:2])
