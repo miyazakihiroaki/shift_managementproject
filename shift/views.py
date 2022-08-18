@@ -89,16 +89,21 @@ class MyPageView(LoginRequiredMixin, View):
         booking_data = staff_data.exclude(Q(workingtime__gt=end_time) | Q(workingtime__lt=start_time))
         for booking in booking_data:
             local_time = localtime(booking.workingtime)
-            number = Shift.objects.filter(user = request.user).count()
+            number = Shift.objects.filter(user = request.user, workingtime = local_time).count()
             staff_number.append(number)
             booking_date = local_time.date()
             booking_hour = str(local_time.hour)
+            if len(booking_hour) == 1:
+                    booking_hour = "0" + booking_hour
             booking_minute = str(local_time.minute)
             if booking_minute == "0":
                 booking_minute = "00"
             booking_hour_minute = booking_hour + ":" + booking_minute
             if (booking_hour_minute in calendar) and (booking_date in calendar[booking_hour_minute]):
-                calendar[booking_hour_minute][booking_date] = "???"
+                calendar[booking_hour_minute][booking_date] = str(number)
+            if calendar[booking_hour_minute][booking_date] == str(staff_per_hour):
+                calendar[booking_hour_minute][booking_date] = "既定の人数に達しました"                
+                
         
         context = {
             'staff_data': staff_data,

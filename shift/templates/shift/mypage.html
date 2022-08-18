@@ -40,10 +40,10 @@
                         <form method="POST"
                             action="{% url 'shift:holiday' datetime.year datetime.month datetime.day booking_hour_minute %}">
                             {% csrf_token %}
-                            <button class="btn btn-light" type="submit">出勤不可</button>
+                            <button class="btn btn-light" type="submit">出勤しない{{booking_hour_minute.book}}</button>
                         </form>
-                        {% else %} {% if book != "" %}
-                        <p class="mb-0">出勤</p>
+                        {% else %} {% if book == "既定の人数に達しました" %}
+                        <p class="mb-0">選択不可</p>
                         {% else %}
                         <p class="mb-0 font-weight-bold text-success">出勤</p>
                         {% endif %}
@@ -65,4 +65,9 @@
 <p>カレンダーの出力結果</p>
 <p>おそらく辞書型？</p>
 {{calendar}} 
+
+<p>#############################################################################################</p>
+<p>booking_dataの出力結果</p>
+{% comment %} <p>おそらく辞書型？</p> {% endcomment %}
+{{booking_data}} 
 {% endblock %}
