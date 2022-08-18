@@ -4,7 +4,7 @@
 <div class="text-center my-5">
     <div class="mb-3">
         <h1>{{staff_name_data.user.clerkname}}さんのシフト希望登録表</h1>
-        <p>1時間当たり{{people_per_hour}}人まで入れます。早い者勝ちです。</p>
+        <p>1時間当たり{{people_per_hour}}人まで入れます。早い者勝ちです。()の中に現時点で出勤登録している人数を表しています。</p>
         <p>{{ start_day }}～{{ end_day }}</p>
     </div>
 
@@ -36,16 +36,20 @@
                     <td scope="row">{{ booking_hour_minute }}</td>
                     {% for datetime, book in booking_date.items %}
                     <td>
-                        {% if book == "" %}
+                        {% if book == '' %}
                         <form method="POST"
                             action="{% url 'shift:holiday' datetime.year datetime.month datetime.day booking_hour_minute %}">
                             {% csrf_token %}
-                            <button class="btn btn-light" type="submit">出勤しない{{booking_hour_minute.book}}</button>
+                            <button class="btn btn-light" type="submit">出勤しない</button>
+                            <p>(0人)</p>
+
                         </form>
-                        {% else %} {% if book == "既定の人数に達しました" %}
-                        <p class="mb-0">選択不可</p>
+                        {% else %} {% if book == "既定人数到達" %}
+                        <p class="mb-0 font-weight-bold text-success">出勤 </p>
+                        <p>規定人数到達</p>
                         {% else %}
                         <p class="mb-0 font-weight-bold text-success">出勤</p>
+                        <p>({{book}}人)</p>
                         {% endif %}
                         <form method="POST"
                             action="{% url 'shift:delete' datetime.year datetime.month datetime.day booking_hour_minute %}">
@@ -67,7 +71,5 @@
 {{calendar}} 
 
 <p>#############################################################################################</p>
-<p>booking_dataの出力結果</p>
-{% comment %} <p>おそらく辞書型？</p> {% endcomment %}
-{{booking_data}} 
+
 {% endblock %}

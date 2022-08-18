@@ -67,7 +67,6 @@ class MyPageView(LoginRequiredMixin, View):
         staff_per_hour = Shop_info.objects.get().people_per_hour
         
         calendar = {}
-        staff_number = []
         # 営業開始時刻～営業終了時刻
         for hour in range(store_start_time.hour, store_end_time.hour+1):
             
@@ -86,11 +85,12 @@ class MyPageView(LoginRequiredMixin, View):
                 
         start_time = make_aware(datetime.combine(start_day, store_start_time))
         end_time = make_aware(datetime.combine(end_day, store_end_time))
-        booking_data = staff_data.exclude(Q(workingtime__gt=end_time) | Q(workingtime__lt=start_time))
+        # booking_data = staff_data.exclude(Q(workingtime__gt=end_time) | Q(workingtime__lt=start_time))
+        booking_data = Shift.objects.exclude(Q(workingtime__gt=end_time) | Q(workingtime__lt=start_time))
+        
         for booking in booking_data:
             local_time = localtime(booking.workingtime)
-            number = Shift.objects.filter(user = request.user, workingtime = local_time).count()
-            staff_number.append(number)
+            number = Shift.objects.filter(workingtime = local_time).count()
             booking_date = local_time.date()
             booking_hour = str(local_time.hour)
             if len(booking_hour) == 1:
@@ -99,17 +99,33 @@ class MyPageView(LoginRequiredMixin, View):
             if booking_minute == "0":
                 booking_minute = "00"
             booking_hour_minute = booking_hour + ":" + booking_minute
-            if (booking_hour_minute in calendar) and (booking_date in calendar[booking_hour_minute]):
-                calendar[booking_hour_minute][booking_date] = str(number)
-            if calendar[booking_hour_minute][booking_date] == str(staff_per_hour):
-                calendar[booking_hour_minute][booking_date] = "既定の人数に達しました"                
+            calendar[booking_hour_minute][booking_date] = str(number)
+            if int(calendar[booking_hour_minute][booking_date]) >= int(staff_per_hour):
+                calendar[booking_hour_minute][booking_date] = "既定人数到達" 
+        
+        # for booking in booking_data:
+        #     local_time = localtime(booking.workingtime)
+        #     # number = Shift.objects.filter(user = request.user, workingtime = local_time).count()
+        #     number = Shift.objects.filter(workingtime = local_time).count()
+        #     booking_date = local_time.date()
+        #     booking_hour = str(local_time.hour)
+        #     if len(booking_hour) == 1:
+        #             booking_hour = "0" + booking_hour
+        #     booking_minute = str(local_time.minute)
+        #     if booking_minute == "0":
+        #         booking_minute = "00"
+        #     booking_hour_minute = booking_hour + ":" + booking_minute
+        #     # if (booking_hour_minute in calendar) and (booking_date in calendar[booking_hour_minute]):
+        #         # calendar[booking_hour_minute][booking_date] = str(number)
+        #     calendar[booking_hour_minute][booking_date] = str(number)
+        #     if calendar[booking_hour_minute][booking_date] >= str(staff_per_hour):
+        #         calendar[booking_hour_minute][booking_date] = "既定人数到達"                
                 
         
         context = {
             'staff_data': staff_data,
             'staff_name_data': staff_name_data,
             'people_per_hour': staff_per_hour,
-            'staff_number':staff_number,
             'booking_data': booking_data,
             'calendar': calendar,
             'days': days,
