@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container ">
+    <div class="row">
+        <div class="col-lg-3 m-auto ">
+            <h1 class="display-4 font-italic text-center "><a href="/" class="text-decoration-none">SHIFT_MANAGEMENT SYSTEM</a></h1>
+            </div>
+            <div class="col-lg-3 m-auto ">
+            
+            {% if user.is_authenticated  %}
+            ログイン中です
+            {% else %}
+            ログインしていません
+            {% endif %}
+            
+            <form class="form-signin mx-4" method="POST">
+                {% csrf_token %}
+
+                <div class="text-center">
+                    <h1 class="h5 my-4 ">ログイン</h1>
+                </div>
+
+                <div class="form-label-group my-3">
+                    <p>メールアドレス</p>
+                    <input type="email" id="id_email" name="username" class="form-control" placeholder="Email address" required autofocus>
+                </div>
+
+                <div class="form-label-group my-3">
+                    <p>パスワード</p>
+                    <input type="password" id="id_password" name="password" class="form-control" placeholder="Password" required>
+                </div>
+
+                <button class="btn btn-primary btn-block my-3" type="submit">ログイン</button>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{{ req }}
+{% endblock %}

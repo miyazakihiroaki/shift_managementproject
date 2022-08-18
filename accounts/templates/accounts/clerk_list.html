@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}店員一覧{% endblock%}
+{% block h1 %}店員一覧{% endblock%}
+
+{% block content %}
+    {% for item in object_list %}
+    <div class="m-4 bg-light border border-success rounded">
+        <h2 class="text-success">{{item.clerkname}}</h2>
+        <img src="{{ item.personalimage.url }}" class="img-thumbnail"/>
+        <div class="mt-3">
+            <a href="{% url 'accounts:clerkdetail' item.pk %}" class="btn btn-primary"> 詳細へ </a>
+        </div>
+    </div>
+    {% endfor %}
+{% endblock content %}

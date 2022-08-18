@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>開始時刻の表示{{ info_1 }}</h1>
+<h1>開始時刻の表示{{ info.start_workingtime }}</h1>
+<h1>名前の表示{{ x }}</h1>
+<h1>名前の表示{{ y }}</h1>
+<h1>名前の表示{{ z }}</h1>    
+<h1>入れる時間の数{{ w }}</h1>
+<h1>booking_data{{ booking_data }}</h1>
+
+{% for item in info_5 %}
+<p>{{item.user.clerkname}}</p>
+{% endfor %}
+
+{% endblock %}

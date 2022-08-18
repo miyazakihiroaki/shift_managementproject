@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}店舗情報{% endblock%}
+{% block h1 %}店舗情報{% endblock%}
+
+{% block content %}
+    <div class="m-4 bg-light border border-success rounded">
+        <p class="m-1">勤務開始時間：{{ object.start_workingtime }}</p>
+        <p class="m-1">勤務終了時間：{{ object.finish_workingtime }}</p>
+        <p class="m-1">時間当たりの人数：{{ object.people_per_hour }}</p>
+        <p class="m-1">電話番号：{{ object.phonenumber }}</p>
+        <p class="m-1">メールアドレス：{{ object.email }}</p>
+    </div>
+{% endblock content %}

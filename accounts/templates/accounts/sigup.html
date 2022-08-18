@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container ">
+    <div class="row">
+        <div class="col-lg-3 m-auto ">
+            <h1 class="display-4 font-italic text-center "><a href="/" class="text-decoration-none">SHIFT_MANAGEMENT SYSTEM</a></h1>
+            </div>
+            <div class="col-lg-3 m-auto ">
+            
+            <form  method="post" enctype="multipart/form-data" class="form-signin mx-4 form-group">
+                {% csrf_token %}
+
+                <div class="text-center">
+                    <h1 class="h5 my-4 ">新規登録</h1>
+                </div>
+
+                <div class="form-label-group my-3">
+                    <p>ユーザー名</p>
+                    <input type="text" id="id_username" name="clerkname" class="form-control" placeholder="ユーザー名" required autofocus>
+                </div>
+
+                <div class="form-label-group my-3">
+                    <p>メールアドレス</p>
+                    <input type="email" id="id_email" name="email" class="form-control" placeholder="Email address" required autofocus>
+                </div>
+
+                <div class="form-label-group my-3">
+                    <p>写真</p>
+                    <input type="file" id="id_file" name="personalimage" class="form-control" required autofocus>
+                </div>
+
+                <div class="form-label-group my-3">
+                    <p>自己紹介文（200字以内）</p>
+                    <input type="text" id="id_text" name="introduction_text" class="form-control" placeholder="自己紹介文を記載" required>
+                </div>
+
+                <div class="form-label-group my-3">
+                    <p>パスワード</p>
+                    <input type="password" id="id_password" name="password" class="form-control" placeholder="Password" required>
+                </div>
+
+                <button class="btn btn-primary btn-block my-3" type="submit">新規登録</button>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
