@@ -11,7 +11,7 @@ from accounts.models import Userr
 from shift.models import Shop_info, Shift
 
 
-def test(request, year, month, day, hour_minute):
+def test(request):
     info = Shop_info.objects.get(pk=1)
     info_1 = info.start_workingtime
     
@@ -19,16 +19,16 @@ def test(request, year, month, day, hour_minute):
     info_2 = Userr.objects.all()[0]
     x = info_2.clerkname
     
-    info_3 = Shift.objects.get(pk=1)
+    info_3 = Shift.objects.first()
     y = info_3.user.clerkname
     
-    info_4 = Shift.objects.get(pk=2)
-    z = info_4.user.clerkname
+    info_5 = Shift.objects.filter(user=request.user)[1]
+    # w = info_5.count()
+    w = info_5.user.clerkname
     
-    info_5 = Shift.objects.filter(user=request.user)
-    w = info_5.count()
+    staff_name_data = Shift.objects.filter(user=request.user)[1]
     
-    context = {'info_1':info_1, 'info':info, 'x':x, 'y': y, 'z':z, 'w':w, 'info_5':info_5,}
+    context = {'info_1':info_1, 'info':info, 'x':x, 'y': y, 'w':w, 'info_5':info_5,'staff_name_data':staff_name_data}
     return render(request, 'shift/test.html', context)
 
 #トップページ練習用
@@ -48,8 +48,8 @@ def shop_info(request):
 #カレンダー関係
 class MyPageView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        staff_data = Shift.objects.filter(user=request.user)
-        staff_name_data = Userr.objects.filter(clerkname=request.user)
+        staff_data =Shift.objects.filter(user=request.user)
+        staff_name_data = Shift.objects.filter(user=request.user).first()
         #urlから年月日を取得
         year = self.kwargs.get('year')
         month = self.kwargs.get('month')
@@ -98,7 +98,7 @@ class MyPageView(LoginRequiredMixin, View):
                 booking_minute = "00"
             booking_hour_minute = booking_hour + ":" + booking_minute
             if (booking_hour_minute in calendar) and (booking_date in calendar[booking_hour_minute]):
-                calendar[booking_hour_minute][booking_date] = ""
+                calendar[booking_hour_minute][booking_date] = "???"
         
         context = {
             'staff_data': staff_data,

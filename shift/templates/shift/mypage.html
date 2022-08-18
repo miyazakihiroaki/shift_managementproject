@@ -3,11 +3,8 @@
 {% block content %}
 <div class="text-center my-5">
     <div class="mb-3">
-        <h1>{{staff_name_data.user}}さんのシフト希望登録表</h1>
+        <h1>{{staff_name_data.user.clerkname}}さんのシフト希望登録表</h1>
         <p>1時間当たり{{people_per_hour}}人まで入れます。早い者勝ちです。</p>
-        {% for item in staff_number %}
-            <p>{{item}}</p>
-        {% endfor %} 
         <p>{{ start_day }}～{{ end_day }}</p>
     </div>
 
@@ -63,5 +60,9 @@
             </tbody>
         </table>
     </div>
-</div> 
+</div>
+<p>#############################################################################################</p>
+<p>カレンダーの出力結果</p>
+<p>おそらく辞書型？</p>
+{{calendar}} 
 {% endblock %}
