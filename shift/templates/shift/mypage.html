@@ -4,7 +4,7 @@
 <div class="text-center my-5">
     <div class="mb-3">
         <h1>{{staff_name_data.user.clerkname}}さんのシフト希望登録表</h1>
-        <p>1時間当たり{{people_per_hour}}人まで入れます。登録順にシフトを順次決定します。（）の中に現時点で出勤登録している人数を表しています。</p>
+        <p>1時間当たり{{people_per_hour}}人まで入れます。登録順にシフトを順次決定します。</p>
         <p>{{ start_day }}～{{ end_day }}</p>
     </div>
 
@@ -14,6 +14,7 @@
         </div>
         <div class="mx-3">
             <a class="btn btn-warning" href="{% url 'shift:mypage' next.year next.month next.day %}">次週</a>
+            {% comment %} 前月、次月、シフトが入力できる日程までとぶリンクを作る {% endcomment %}
         </div>
     </div>
     <div class="mb-3">
