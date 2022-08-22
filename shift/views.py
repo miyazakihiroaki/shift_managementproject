@@ -1,4 +1,4 @@
-from datetime import datetime, date, time, timedelta
+from datetime import datetime, date, time, timedelta, timezone
 from django.utils.timezone import localtime, make_aware
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.decorators.http import require_POST
@@ -45,6 +45,26 @@ def shop_info(request):
     return render(request, 'shift/shop_info.html', context)
 
 
+#トップページに行く前に現在日時等を取得してカレンダーに渡す
+class ReverseView(View):
+    def get(self, request):
+        
+        if request.user.is_authenticated:
+            user_data = Userr.objects.get(id=request.user.id)
+            # user_data = Userr.objects.get(clerkname = request.user)なんでこれじゃダメなのか？？
+            if self.request.user.category == 0:
+                start_date = date.today()
+                weekday = start_date.weekday()
+                # カレンダー日曜日開始
+                if weekday != 6:
+                    start_date = start_date - timedelta(days=weekday + 1)
+                return redirect('shift:mypage', start_date.year, start_date.month, start_date.day)
+        else:
+            user_data = None
+
+        return render(request, 'shift/home.html')
+
+
 #カレンダー関係
 class MyPageView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
@@ -62,6 +82,8 @@ class MyPageView(LoginRequiredMixin, View):
         #店舗営業時間取得
         store_start_time = Shop_info.objects.get(pk=1).start_workingtime
         store_end_time =Shop_info.objects.get(pk=1).finish_workingtime
+        
+        limit = Shop_info.objects.get(pk=1).deadline_day
         
         #1時間当たりシフトに入る人数を取得
         staff_per_hour = Shop_info.objects.get().people_per_hour
@@ -81,21 +103,21 @@ class MyPageView(LoginRequiredMixin, View):
                     minute_str = "00"
                 hour_minute = hour_str + ":" + minute_str
                 row1 = {}
-                for day in days:
-                    row1[day] = ""
                 row2 = {}
-                for day in days:
-                    row2[day] = ""
                 calendar1[hour_minute] = row1
                 calendar2[hour_minute] = row2
+                for day_k in days:
+                    row1[day_k] = ""
+                for day_k in days:
+                    row2[day_k] = ""
+                    deadline_time = (datetime(year=year, month=month, day=int(day_k.day), hour=hour, minute=0) + timedelta(days=-limit))
+                    if deadline_time < datetime.now():
+                        calendar2[hour_minute][day_k] = "False"                                    
                 
         start_time = make_aware(datetime.combine(start_day, store_start_time))
         end_time = make_aware(datetime.combine(end_day, store_end_time))
-        booking_data1 = Shift.objects.exclude(Q(workingtime__gt=end_time) | Q(workingtime__lt=start_time))
-        booking_data2 = staff_data.exclude(Q(workingtime__gt=end_time) | Q(workingtime__lt=start_time))
-        
-        
-       
+        booking_data1 = Shift.objects.exclude(Q(workingtime__gt=end_time) | Q(workingtime__lt=start_time))#全体集計用
+        booking_data2 = staff_data.exclude(Q(workingtime__gt=end_time) | Q(workingtime__lt=start_time))#各個人集計用
         
         
         for booking in booking_data2:
@@ -107,8 +129,8 @@ class MyPageView(LoginRequiredMixin, View):
             booking_minute = str(local_time.minute)
             if booking_minute == "0":
                 booking_minute = "00"
-            booking_hour_minute = booking_hour + ":" + booking_minute
-            if (booking_hour_minute in calendar2) and (booking_date in calendar2[booking_hour_minute]):
+            booking_hour_minute = booking_hour + ":" + booking_minute            
+            if (booking_hour_minute in calendar2) and (booking_date in calendar2[booking_hour_minute]) and calendar2[booking_hour_minute][booking_date] != "False":
                 calendar2[booking_hour_minute][booking_date] = "出勤"
         
         for booking in booking_data1:
@@ -158,6 +180,8 @@ class MyPageView(LoginRequiredMixin, View):
             'end_day': end_day,
             'before': days[0] - timedelta(days=7),
             'next': days[-1] + timedelta(days=1),
+            'next_month': days[0] + timedelta(days=30),
+            'before_month': days[0] - timedelta(days=30),
             'year': year,
             'month': month,
             'day': day,

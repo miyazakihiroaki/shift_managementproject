@@ -10,10 +10,12 @@
 
     <div class="d-flex mb-2">
         <div class="mx-3 mr-auto">
+            <a class="btn btn-warning" href="{% url 'shift:mypage' before_month.year before_month.month before_month.day %}">１か月前</a>
             <a class="btn btn-warning" href="{% url 'shift:mypage' before.year before.month before.day %}">前週</a>
         </div>
         <div class="mx-3">
             <a class="btn btn-warning" href="{% url 'shift:mypage' next.year next.month next.day %}">次週</a>
+            <a class="btn btn-warning" href="{% url 'shift:mypage' next_month.year next_month.month next_month.day %}">１か月後</a>
             {% comment %} 前月、次月、シフトが入力できる日程までとぶリンクを作る {% endcomment %}
         </div>
     </div>
@@ -37,18 +39,18 @@
                     <td scope="row">{{ booking_hour_minute }}</td>
                     {% for datetime, book in booking_date2.items %}
                     <td>
-                        {% if book == '' %}
+                        {% if book == ''%}
                         <form method="POST"
                             action="{% url 'shift:holiday' datetime.year datetime.month datetime.day booking_hour_minute %}">
                             {% csrf_token %}
                             <button class="btn btn-light" type="submit">出勤しない</button>
-                            <p></p>
                         </form>
-                        {% else %} {% if book == "既定人数到達" %}
+                        {% elif book == "既定人数到達" %}
                         <p class="mb-0 font-weight-bold text-success">既定人数到達 </p>
+                        {% elif book == "False" %} 
+                        <i class="fas fa-times text-danger"></i>
                         {% else %}
                         <p class="mb-0 font-weight-bold text-success">出勤</p>
-                        {% endif %}
                         <form method="POST"
                             action="{% url 'shift:delete' datetime.year datetime.month datetime.day booking_hour_minute %}">
                             {% csrf_token %}
@@ -63,9 +65,9 @@
         </table>
     </div>
 </div>
-<p>#############################################################################################</p>
+{% comment %} <p>#############################################################################################</p>
 <p>カレンダー1（全体用）の出力結果</p>
-{{calendar1}} 
+{{calendar1}}  {% endcomment %}
 
 <p>#############################################################################################</p>
 <p>カレンダー2（個人用）の出力結果上で出力されてるやつ</p>

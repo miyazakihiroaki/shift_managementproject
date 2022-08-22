@@ -79,6 +79,10 @@ class Userr(AbstractBaseUser):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
+    
+    class Meta:
+        verbose_name = ('user')
+        # verbose_name_plural = ('users')
 
 
 # def __str__(self)により、管理画面に表示されるモデル内のデータ（レコード）を判別するための、名前（文字列）を定義する

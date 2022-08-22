@@ -139,7 +139,7 @@ LOGIN_URL = 'accounts:login'
 LOGOUT_URL = 'accounts:logout'
 
 # LOGIN_REDIRECT_URL = 'accounts:login_redirect'
-LOGIN_REDIRECT_URL = 'shift:index'
+LOGIN_REDIRECT_URL = 'shift:reverse'
 
 LOGOUT_REDIRECT_URL = 'accounts:login'
 

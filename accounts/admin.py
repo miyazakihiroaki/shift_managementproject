@@ -16,6 +16,7 @@ class CustomUserAdmin(UserAdmin):
                 'personalimage',
                 'introduction_text',
                 'admin_only_text',
+                'category',
             )
         }),
         (None, {
