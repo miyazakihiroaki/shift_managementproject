@@ -3,19 +3,19 @@
 {% block content %}
 <div class="text-center my-5">
     <div class="mb-3">
-        <h1>{{staff_name_data.user.clerkname}}さんのシフト希望登録表</h1>
+        <h1>{{staff_name_data.clerkname}}さんのシフト希望登録表</h1>
         <p>1時間当たり{{people_per_hour}}人まで入れます。登録順にシフトを順次決定します。</p>
         <p>{{ start_day }}～{{ end_day }}</p>
     </div>
 
     <div class="d-flex mb-2">
         <div class="mx-3 mr-auto">
-            <a class="btn btn-warning" href="{% url 'shift:mypage' before_month.year before_month.month before_month.day %}">１か月前</a>
+            <a class="btn btn-warning" href="{% url 'shift:mypage' before_month.year before_month.month before_month.day %}">4週前</a>
             <a class="btn btn-warning" href="{% url 'shift:mypage' before.year before.month before.day %}">前週</a>
         </div>
         <div class="mx-3">
             <a class="btn btn-warning" href="{% url 'shift:mypage' next.year next.month next.day %}">次週</a>
-            <a class="btn btn-warning" href="{% url 'shift:mypage' next_month.year next_month.month next_month.day %}">１か月後</a>
+            <a class="btn btn-warning" href="{% url 'shift:mypage' next_month.year next_month.month next_month.day %}">4週後</a>
             {% comment %} 前月、次月、シフトが入力できる日程までとぶリンクを作る {% endcomment %}
         </div>
     </div>
@@ -43,10 +43,16 @@
                         <form method="POST"
                             action="{% url 'shift:holiday' datetime.year datetime.month datetime.day booking_hour_minute %}">
                             {% csrf_token %}
-                            <button class="btn btn-light" type="submit">出勤しない</button>
+                            <button class="btn btn-outline-success" type="submit">出勤しない</button>
                         </form>
                         {% elif book == "既定人数到達" %}
                         <p class="mb-0 font-weight-bold text-success">既定人数到達 </p>
+                        {% comment %} <form method="POST"
+                            action="{% url 'shift:delete' datetime.year datetime.month datetime.day booking_hour_minute %}">
+                            {% csrf_token %}
+                            <button class="btn btn-outline-danger" type="submit">取消</button>
+                        </form> {% endcomment %}
+                        <i class="fas fa-times text-danger"></i>
                         {% elif book == "False" %} 
                         <i class="fas fa-times text-danger"></i>
                         {% else %}
@@ -54,7 +60,7 @@
                         <form method="POST"
                             action="{% url 'shift:delete' datetime.year datetime.month datetime.day booking_hour_minute %}">
                             {% csrf_token %}
-                            <button class="btn btn-danger" type="submit">取消</button>
+                            <button class="btn btn-outline-danger" type="submit">取消</button>
                         </form>
                         {% endif %}
                     </td>
@@ -65,9 +71,9 @@
         </table>
     </div>
 </div>
-{% comment %} <p>#############################################################################################</p>
+<p>#############################################################################################</p>
 <p>カレンダー1（全体用）の出力結果</p>
-{{calendar1}}  {% endcomment %}
+{{calendar1}}  
 
 <p>#############################################################################################</p>
 <p>カレンダー2（個人用）の出力結果上で出力されてるやつ</p>

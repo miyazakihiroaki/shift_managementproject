@@ -14,12 +14,6 @@ class Login(LoginView):
     template_name = 'accounts/login.html'
 
 
-# ログイン後、ユーザの個別ページへリダイレクト
-# def login_redirect(request):
-#     model = Userr
-#     return HttpResponseRedirect(reverse('shift:index'))
-
-
         
 #新規店員登録
 def signup(request):
@@ -51,7 +45,12 @@ class DetailClerkView(DetailView):
     model = Userr
     
 
-
+#ログイン者の情報表示
+def myinfo(request):
+    myinfo_data = Userr.objects.get(id=request.user.id)
+    context = {'myinfo_data':myinfo_data}
+    return render(request, 'accounts/myinfo.html', context)
+    
 
 
 
