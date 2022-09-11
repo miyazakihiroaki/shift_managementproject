@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}シフト詳細{% endblock%}
+{% block h1 %}{{start_time}}にシフトに入っているスタッフ一覧{% endblock%}
+
+{% block content %}
+    {% for object in booking_data %}
+        <li>{{object.user.clerkname}}</li>
+    {% endfor %}
+
+    <a class="btn btn-warning" href="{% url 'shift:reverse' %} ">一覧ページへ</a>
+{% endblock content %}
