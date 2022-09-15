@@ -56,6 +56,7 @@
     <p class='text-center'>{{ start_day }}～{{ end_day }}</p>
     {% for object in staff_name_datas %}
         <li class="text-left">{{object.clerkname}}</li>
+        <li class="text-left">{{object.id}}</li>
     {% endfor %}
 </div>
 {% endblock content %}

@@ -252,6 +252,7 @@ def shift_detail(request, year, month, day, hour_minute):
     
     return render(request, 'shift/shift_detail.html',context )
 
+
 class Staff_Shift(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         #urlから取得
@@ -352,3 +353,25 @@ class Staff_Shift(LoginRequiredMixin, View):
         }
         if self.request.user.category == 1:
             return render(request, 'shift/manager_detail_mypage.html',context )
+
+
+def select_staff(request):
+    staff_name_datas = Userr.objects.all()
+    context = {'staff_name_datas':staff_name_datas}
+    return render(request, 'shift/manager_select_staff.html', context)
+
+
+# def staff_reverse()
+class StaffReverseView(View):
+    def get(self, request, *args, **kwargs):
+        #urlからスタッフidを取得
+        id = self.kwargs.get('pk')
+        start_date = date.today()
+        start_date = start_date + timedelta(days=28)
+        weekday = start_date.weekday()
+        # カレンダー日曜日開始
+        if weekday != 6:
+            start_date = start_date - timedelta(days=weekday + 1)
+            return redirect('shift:staff_shift', id, start_date.year, start_date.month, start_date.day)
+
+        return render(request, 'shift/home.html')

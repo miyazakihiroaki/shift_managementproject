@@ -5,7 +5,7 @@
 
 {% block content %}
     {% for object in booking_data %}
-        <li>{{object.user.clerkname}}</li>
+        <li class="text-left list-group-item list-unstyled">{{object.user.clerkname}}</li>
     {% endfor %}
 
     <a class="btn btn-warning" href="{% url 'shift:reverse' %} ">一覧ページへ</a>
