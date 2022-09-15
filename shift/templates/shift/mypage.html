@@ -16,7 +16,6 @@
         <div class="mx-3">
             <a class="btn btn-warning" href="{% url 'shift:mypage' next.year next.month next.day %}">次週</a>
             <a class="btn btn-warning" href="{% url 'shift:mypage' next_month.year next_month.month next_month.day %}">4週後</a>
-            {% comment %} 前月、次月、シフトが入力できる日程までとぶリンクを作る {% endcomment %}
         </div>
     </div>
     <div class="mb-3">
@@ -47,15 +46,9 @@
                         </form>
                         {% elif book == "既定人数到達" %}
                         <p class="mb-0 font-weight-bold text-success">既定人数到達 </p>
-                        {% comment %} <form method="POST"
-                            action="{% url 'shift:delete' datetime.year datetime.month datetime.day booking_hour_minute %}">
-                            {% csrf_token %}
-                            <button class="btn btn-outline-danger" type="submit">取消</button>
-                        </form> {% endcomment %}
                         <i class="fas fa-times text-danger"></i>
                         {% elif book == "False" %} 
                         <i class="fas fa-times text-danger"></i>
-                        <p>何でだろう
                         {% else %}
                         <p class="mb-0 font-weight-bold text-success">出勤</p>
                         <form method="POST"

@@ -128,14 +128,14 @@ class MyPageView(LoginRequiredMixin, View):
                 calendar2[hour_minute] = row2
                 for day_k in days:
                     row1[day_k] = ""
-                    number = Shift.objects.filter(workingtime = datetime(year=year, month=month, day=int(day_k.day), hour=hour, minute=0)).count()
+                    number = Shift.objects.filter(workingtime = datetime(year=int(day_k.year), month=int(day_k.month), day=int(day_k.day), hour=hour, minute=0)).count()
                     calendar1[hour_minute][day_k] = number
                     if int(calendar1[hour_minute][day_k]) == int(staff_per_hour):
                         calendar1[hour_minute][day_k] = "既定人数到達" 
                         calendar2[hour_minute][day_k] = "既定人数到達" 
                 for day_k in days:
                     row2[day_k] = ""
-                    deadline_time = (datetime(year=year, month=month, day=int(day_k.day), hour=hour, minute=0) + timedelta(days = -limit))
+                    deadline_time = (datetime(year=int(day_k.year), month=int(day_k.month), day=int(day_k.day), hour=hour, minute=0) + timedelta(days = -limit))
                     if deadline_time < datetime.now() and calendar2[hour_minute][day_k] != "既定人数到達":
                         calendar2[hour_minute][day_k] = "False"                                    
                 
@@ -297,7 +297,7 @@ class Staff_Shift(LoginRequiredMixin, View):
 
                 for day_k in days:
                     row2[day_k] = ""
-                    deadline_time = (datetime(year=year, month=month, day=int(day_k.day), hour=hour, minute=0) + timedelta(days = -limit))
+                    deadline_time = (datetime(year=int(day_k.year), month=int(day_k.month), day=int(day_k.day), hour=hour, minute=0) + timedelta(days = -limit))
                     if deadline_time < datetime.now() and calendar2[hour_minute][day_k] != "既定人数到達":
                         calendar2[hour_minute][day_k] = "False"                                    
                 
@@ -361,7 +361,6 @@ def select_staff(request):
     return render(request, 'shift/manager_select_staff.html', context)
 
 
-# def staff_reverse()
 class StaffReverseView(View):
     def get(self, request, *args, **kwargs):
         #urlからスタッフidを取得
