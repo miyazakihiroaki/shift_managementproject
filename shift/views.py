@@ -11,6 +11,12 @@ from accounts.models import Userr
 from shift.models import Shop_info, Shift
 from shift.forms import StaffSelectForm
 
+def get_path(request):
+    path = request.path #ドメインを含まないフルパス
+    # path_2 = request.get_full_path() # クエリパラメーターを含むパス
+    # path_3 = request.build_absolute_uri() #ドメインを含むパス
+    return path
+
 
 def test(request):
     info = Shop_info.objects.get(pk=1)
@@ -241,6 +247,8 @@ def Delete(request, year, month, day, hour_minute):
         start_date = start_date - timedelta(days=weekday + 1)
     return redirect('shift:mypage', year=start_date.year, month=start_date.month, day=start_date.day)
 
+# 店長専用
+###########################################################################################################
 
 def shift_detail(request, year, month, day, hour_minute):
     hour = int(hour_minute[0:2])
@@ -351,9 +359,12 @@ class Staff_Shift(LoginRequiredMixin, View):
             'store_start_time':store_start_time,
             'deadline_time':deadline_time,
         }
-        if self.request.user.category == 1:
+        path = get_path(request)
+        # if self.request.user.category == 1:
+        if "view_only" in path:
+            return render(request, 'shift/manager_detail_mypage_view_only.html',context )
+        else:
             return render(request, 'shift/manager_detail_mypage.html',context )
-
 
 def select_staff(request):
     staff_name_datas = Userr.objects.all()
@@ -371,6 +382,45 @@ class StaffReverseView(View):
         # カレンダー日曜日開始
         if weekday != 6:
             start_date = start_date - timedelta(days=weekday + 1)
-            return redirect('shift:staff_shift', id, start_date.year, start_date.month, start_date.day)
+            return redirect('shift:staff_shift_view_only', id, start_date.year, start_date.month, start_date.day)
 
         return render(request, 'shift/home.html')
+    
+
+@require_POST
+def Manager_Holiday(request, pk, year, month, day, hour_minute):
+    staff_data = Shift.objects.filter(user_id = pk).first()
+    hour = int(hour_minute[0:2])
+    minute = int(hour_minute[3:5])
+    start_time = make_aware(datetime(year=year, month=month, day=day, hour=hour, minute=minute))
+    
+    # 出勤時間をShiftモデルに追加
+    Shift.objects.create(
+        user = staff_data.user,
+        workingtime=start_time,
+    )
+    start_date = date(year=year, month=month, day=day)
+    weekday = start_date.weekday()
+    # カレンダー日曜日開始
+    if weekday != 6:
+        start_date = start_date - timedelta(days=weekday + 1)
+    return redirect('shift:staff_shift', pk , start_date.year, start_date.month, start_date.day)
+
+
+@require_POST
+def Manager_Delete(request, pk, year, month, day, hour_minute):
+    staff_data = Shift.objects.filter(user_id = pk).first()
+    hour = int(hour_minute[0:2])
+    minute = int(hour_minute[3:5])
+    start_time = make_aware(datetime(year=year, month=month, day=day, hour=hour, minute=minute))
+    booking_data = Shift.objects.filter(user=staff_data.user)
+    booking_data =booking_data.filter(workingtime=start_time)
+    # シフト削除
+    booking_data.delete()
+
+    start_date = date(year=year, month=month, day=day)
+    weekday = start_date.weekday()
+    # カレンダー日曜日開始
+    if weekday != 6:
+        start_date = start_date - timedelta(days=weekday + 1)
+    return redirect('shift:staff_shift', pk, start_date.year, start_date.month, start_date.day)
