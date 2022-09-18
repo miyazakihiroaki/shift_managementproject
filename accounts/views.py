@@ -18,7 +18,7 @@ class Login(LoginView):
 def signup(request):
     context = {}
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = UserCreationForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save(commit=False)
             user.save()
@@ -63,7 +63,7 @@ class ProfileEditView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         user_data = Userr.objects.get(id=request.user.id)
         form = ProfileForm(
-            request.POST or None,
+            request.POST, request.FILES or None,
             initial={
                 'clerkname': user_data.clerkname,
                 'email': user_data.email,
@@ -78,7 +78,8 @@ class ProfileEditView(LoginRequiredMixin, View):
             return render(request, 'accounts/manager/profile_edit.html', context)
 
     def post(self, request, *args, **kwargs):
-        form = ProfileForm(request.POST or None)
+        user_data = Userr.objects.get(id=request.user.id)
+        form = ProfileForm(request.POST,request.FILES)
         if form.is_valid():
             user_data = Userr.objects.get(id=request.user.id)
             user_data.clerkname = form.cleaned_data['clerkname']
@@ -91,5 +92,7 @@ class ProfileEditView(LoginRequiredMixin, View):
             
             
         context = {'form':form}
-        
-        return render(request, 'accounts/profile.html', context)
+        if user_data.category == 0:
+            return render(request, 'accounts/profile.html', context)
+        else:
+            return render(request, 'accounts/manager/profile.html', context)

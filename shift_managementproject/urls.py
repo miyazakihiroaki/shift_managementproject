@@ -1,6 +1,7 @@
 from django.conf import settings
-from django.contrib.auth.views import LoginView, LogoutView
 from django.conf.urls.static import static
+
+# from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib import admin
 from django.urls import path, include
 from accounts import views
