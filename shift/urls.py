@@ -21,7 +21,7 @@ urlpatterns = [
     ###################################################################
     
     #店長専用ページ
-    path('manager_page/<int:year>/<int:month>/<int:day>/',views.MyPageView.as_view(), name ='manager_page'),
+    path('manager_page/<int:year>/<int:month>/<int:day>/',views.ManagerPageView.as_view(), name ='manager_page'),
     path('manager_page/shift_detail/<int:year>/<int:month>/<int:day>/<str:hour_minute>/',views.shift_detail, name ='shift_detail'),
     path('manager_page/staff_shift/<int:pk>/<int:year>/<int:month>/<int:day>/',views.Staff_Shift.as_view(), name ='staff_shift'),
     path('manager_page/staff_shift/<int:pk>/<int:year>/<int:month>/<int:day>/view_only/',views.Staff_Shift.as_view(), name ='staff_shift_view_only'),

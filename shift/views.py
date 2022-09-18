@@ -43,7 +43,11 @@ def test(request):
 def index(request):
     if request.user.is_authenticated:
         staff_data = Shift.objects.filter(user=request.user).first()
-        context = {'object':staff_data}
+        opacity_list = [75,50,25,10]
+        opacity = {'75': 75, '50': 50, '25': 25, '10': 10}
+        context = {'object':staff_data, 'opacity_list': opacity_list, 'opacity' : opacity}
+        print(opacity_list[0])
+        print(opacity['75'])
         return render(request, 'shift/home.html', context)
     else:
         print("User is not logged in")
@@ -176,6 +180,9 @@ class MyPageView(LoginRequiredMixin, View):
                 booking_minute = "00"
             booking_hour_minute = booking_hour + ":" + booking_minute
         
+        # 背景色の不透明度リストを格納
+        opacity_list = [75,50,15,20]
+        
         context = {
             'staff_data': staff_data,
             'staff_name_data': staff_name_data,
@@ -200,8 +207,8 @@ class MyPageView(LoginRequiredMixin, View):
         }
         if self.request.user.category == 0:
             return render(request, 'shift/mypage.html',context )
-        elif self.request.user.category == 1:
-            return render(request, 'shift/manager_mypage.html',context )
+        # elif self.request.user.category == 1:
+        #     return render(request, 'shift/manager_mypage.html',context )
         
 
 #出勤時間登録
@@ -249,7 +256,98 @@ def Delete(request, year, month, day, hour_minute):
 
 # 店長専用
 ###########################################################################################################
+class ManagerPageView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        #urlから取得
+        year = self.kwargs.get('year')
+        month = self.kwargs.get('month')
+        day = self.kwargs.get('day')
+        start_date = date(year=year, month=month, day=day)
+        days = [start_date + timedelta(days=day) for day in range(7)]
+        start_day = days[0]
+        end_day = days[-1]
+        
+        
+        #店舗情報取得
+        store_start_time = Shop_info.objects.get(pk=1).start_workingtime
+        store_end_time =Shop_info.objects.get(pk=1).finish_workingtime
+        limit = Shop_info.objects.get(pk=1).deadline_day
+        staff_per_hour = Shop_info.objects.get().people_per_hour
 
+        deadline_time = (datetime(year=year, month=month, day=day, hour=6, minute=0) + timedelta(days = -limit))
+        
+        # 背景色の不透明度リストを格納
+        opacity_list = [75,50,25,10, 0]
+        calendar1 = {}#全体集計用
+        for hour in range(store_start_time.hour, store_end_time.hour+1):
+            
+            if time(hour=hour, minute=0) <= store_end_time:
+                hour_str = str(hour)
+                if len(hour_str) == 1:
+                    hour_str = "0" + hour_str
+                minute_str = str(0)
+                if minute_str == "0":
+                    minute_str = "00"
+                hour_minute = hour_str + ":" + minute_str
+                row1 = {}
+                calendar1[hour_minute] = row1
+                for day_k in days:
+                    row1[day_k] = {}
+                    number = Shift.objects.filter(workingtime = datetime(year=int(day_k.year), month=int(day_k.month), day=int(day_k.day), hour=hour, minute=0)).count()
+                    calendar1[hour_minute][day_k]["number"] = number
+                    # #不透明度決定
+                    # if number/staff_per_hour < 0.4:
+                    #     calendar1[hour_minute][day_k]["opacity"] = opacity_list[0]
+                    # elif number/staff_per_hour < 0.6:
+                    #     calendar1[hour_minute][day_k]["opacity"] = opacity_list[1]
+                    # elif number/staff_per_hour < 0.8:
+                    #     calendar1[hour_minute][day_k]["opacity"] = opacity_list[2]
+                    # else:
+                    #     calendar1[hour_minute][day_k]["opacity"] = opacity_list[3]
+                    
+                    if number/staff_per_hour < 0.5:
+                        calendar1[hour_minute][day_k]["opacity"] = opacity_list[2]
+                    else:
+                        calendar1[hour_minute][day_k]["opacity"] = opacity_list[4]    
+                    #規定人数到達の確認
+                    if int(calendar1[hour_minute][day_k]["number"]) == int(staff_per_hour):
+                        calendar1[hour_minute][day_k]["number"] = "既定人数到達"     
+                        
+        start_time = make_aware(datetime.combine(start_day, store_start_time))
+        end_time = make_aware(datetime.combine(end_day, store_end_time))
+        booking_data1 = Shift.objects.exclude(Q(workingtime__gt=end_time) | Q(workingtime__lt=start_time))#全体集計用
+        
+        for booking in booking_data1:
+            local_time = localtime(booking.workingtime)
+            booking_date = local_time.date()
+            booking_hour = str(local_time.hour)
+            if len(booking_hour) == 1:
+                    booking_hour = "0" + booking_hour
+            booking_minute = str(local_time.minute)
+            if booking_minute == "0":
+                booking_minute = "00"
+            booking_hour_minute = booking_hour + ":" + booking_minute
+        
+        context = {
+            'people_per_hour': staff_per_hour,
+            'booking_data1': booking_data1,
+            'calendar1': calendar1,
+            'days': days,
+            'start_day': start_day,
+            'end_day': end_day,
+            'before': days[0] - timedelta(days=7),
+            'next': days[-1] + timedelta(days=1),
+            'next_month': days[0] + timedelta(days=28),
+            'before_month': days[0] - timedelta(days=28),
+            'year': year,
+            'month': month,
+            'day': day,
+            'store_start_time':store_start_time,
+            'deadline_time':deadline_time,
+        }
+        # print(calendar1)
+        return render(request, 'shift/manager_mypage.html',context )
+        
 def shift_detail(request, year, month, day, hour_minute):
     hour = int(hour_minute[0:2])
     minute = int(hour_minute[3:5])
