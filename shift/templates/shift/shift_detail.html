@@ -1,12 +1,14 @@
-{% extends 'base.html' %}
+{% extends 'base_manager.html' %}
 
 {% block title %}シフト詳細{% endblock%}
 {% block h1 %}{{start_time}}にシフトに入っているスタッフ一覧{% endblock%}
 
 {% block content %}
+    <ul class="list-group list-group-flush">
     {% for object in booking_data %}
         <li class="text-left list-group-item list-unstyled">{{object.user.clerkname}}</li>
     {% endfor %}
+    </ul>
 
-    <a class="btn btn-outline-success m-2" href="{% url 'shift:reverse' %} ">一覧ページへ</a>
+    <a class="btn btn-outline-success" href="{% url 'shift:reverse' %} ">一覧ページへ</a>
 {% endblock content %}

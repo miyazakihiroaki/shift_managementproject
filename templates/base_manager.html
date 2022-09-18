@@ -8,18 +8,18 @@
 
         <!-- Bootstrap CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"/>
-        <title>{% block title %}{% endblock title %}|シフト管理アプリ</title>
+        <link rel="stylesheet" type="text/css" href="{% static 'shift/css/style.css' %}">
 
-        {% comment %} <script src="{% static 'js/script.js' %}"></script> {% endcomment %}
+        <title>{% block title %}{% endblock title %}|シフト管理アプリ</title>
     </head>
     <body>
         <nav class="navbar navbar-dark bg-success sticky-top">
             <div class="navbar-nav d-flex flex-row">
                 <a class="nav-link mx-3" href="{% url 'shift:reverse' %}">シフト状況概要</a>
                 <a class="nav-link mx-3" href="{% url 'shift:select_staff' %}">シフト状況詳細</a>
-                <a class="nav-link mx-3" href="{% url 'accounts:clerklist' %}">店員一覧</a>
+                <a class="nav-link mx-3" href="{% url 'accounts:manager-clerklist' %}">店員一覧</a>
                 <a class="nav-link mx-3" href="{% url 'accounts:profile' %}">登録情報</a> 
                 <a class="nav-link mx-3" href="{% url 'shift:shop_info' %}">店舗情報</a> 
             </div>

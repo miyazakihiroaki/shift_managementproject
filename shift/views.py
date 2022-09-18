@@ -58,7 +58,11 @@ def index(request):
 def shop_info(request):
     info = Shop_info.objects.all().order_by('-id').first() # idカラム降順で並び替え
     context = {'object':info}
-    return render(request, 'shift/shop_info.html', context)
+    if request.user.category == 0:
+        return render(request, 'shift/shop_info.html', context)
+    else:
+        return render(request, 'shift/manager/shop_info.html', context)
+        
 
 
 #トップページに行く前に現在日時等を取得してカレンダーに渡す
@@ -167,18 +171,19 @@ class MyPageView(LoginRequiredMixin, View):
                 booking_minute = "00"
             booking_hour_minute = booking_hour + ":" + booking_minute            
             if (booking_hour_minute in calendar2) and (booking_date in calendar2[booking_hour_minute]) and calendar2[booking_hour_minute][booking_date] != "False":
+                print(f"booking_hour_minuteは{booking_hour_minute}で\nbooking_dateは{booking_date}です")
                 calendar2[booking_hour_minute][booking_date] = "出勤"
         
-        for booking in booking_data1:
-            local_time = localtime(booking.workingtime)
-            booking_date = local_time.date()
-            booking_hour = str(local_time.hour)
-            if len(booking_hour) == 1:
-                    booking_hour = "0" + booking_hour
-            booking_minute = str(local_time.minute)
-            if booking_minute == "0":
-                booking_minute = "00"
-            booking_hour_minute = booking_hour + ":" + booking_minute
+        # for booking in booking_data1:
+        #     local_time = localtime(booking.workingtime)
+        #     booking_date = local_time.date()
+        #     booking_hour = str(local_time.hour)
+        #     if len(booking_hour) == 1:
+        #             booking_hour = "0" + booking_hour
+        #     booking_minute = str(local_time.minute)
+        #     if booking_minute == "0":
+        #         booking_minute = "00"
+        #     booking_hour_minute = booking_hour + ":" + booking_minute
         
         # 背景色の不透明度リストを格納
         opacity_list = [75,50,15,20]
@@ -207,8 +212,6 @@ class MyPageView(LoginRequiredMixin, View):
         }
         if self.request.user.category == 0:
             return render(request, 'shift/mypage.html',context )
-        # elif self.request.user.category == 1:
-        #     return render(request, 'shift/manager_mypage.html',context )
         
 
 #出勤時間登録
