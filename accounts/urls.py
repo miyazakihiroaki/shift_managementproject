@@ -13,13 +13,16 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name="logout"),
     path('signup/', views.signup, name="signup"),   
     path('myinfo/', views.myinfo, name="profile"),   
-    path('profile/edit/', views.ProfileEditView.as_view(), name='profile_edit'),  
+    # path('profile/edit/', views.ProfileEditView.as_view(), name='profile_edit'),  
     path('clerklist/', views.ListClerkView.as_view(), name="clerklist"),
     path('clerklist/<int:pk>/detail/', views.DetailClerkView.as_view(), name="clerkdetail"),
     path('finish_signup', views.FinishSignupView.as_view(), name="finish-signup"),
     
     ##店長専用ページ
     path('manager_page/clerklist/', views.ListClerkView_Manager.as_view(), name="manager-clerklist"),
+    
+    
+    path('profile/edit/<int:pk>/test/', views.UpdateProfileView.as_view(), name='profile_edit'),  
     
 ]
 
