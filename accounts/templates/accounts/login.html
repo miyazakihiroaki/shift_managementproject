@@ -8,11 +8,11 @@
             </div>
             <div class="col-lg-3 m-auto ">
             
-            {% if user.is_authenticated  %}
+            {% comment %} {% if user.is_authenticated  %}
             ログイン中です
             {% else %}
             ログインしていません
-            {% endif %}
+            {% endif %} {% endcomment %}
             
             <form class="form-signin mx-4" method="POST">
                 {% csrf_token %}

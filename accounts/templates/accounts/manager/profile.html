@@ -7,8 +7,8 @@
     <div class = "text-center">
         <h1>登録情報</h1>
     </div>
-    <div class="p-4 m-4 bg-light border border-success rounded">
-        <h2 class="text-success">{{myinfo_data.clerkname}}</h2>
+    <div class="p-4 m-4 bg-light border border-success rounded text-center">
+        <h2>{{myinfo_data.clerkname}}</h2>
         {% if myinfo_data.personalimage %}
         <img src="{{ myinfo_data.personalimage.url }}" class="img-thumbnail"/>
         {% endif %}

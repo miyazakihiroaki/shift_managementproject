@@ -1,16 +1,17 @@
 {% extends 'base.html' %}
 
 {% block title %}店員詳細{% endblock%}
-{% block h1 %}店員詳細{% endblock%}
-
 
 {% block content %}
-    <div class="p-4 m-4 bg-light border border-success rounded">
-        <h2 class="text-success">{{object.clerkname}}</h2>
-        <img src="{{ object.personalimage.url }}" class="img-thumbnail"/>
+    <div class="text-center">
+        <h1>店員詳細</h1>
+    </div>
+    <div class="p-4 m-4 bg-light border border-success rounded text-center">
+        <h2>{{object.clerkname}}</h2>
+        <img class="d-block mx-auto" src="{{ object.personalimage.url }}" class="img-thumbnail"/>
         <h4 class="text-dark">メールアドレス：{{object.email}}</h4>
         <p>{{ object.introduction_text }}</p>
-        <a href="{% url 'accounts:clerklist' %}" class="btn btn-primary"> 一覧へ </a>
+        <a href="{% url 'accounts:clerklist' %}" class="btn btn-success"> 一覧へ </a>
     </div>
 {% endblock content %}
 

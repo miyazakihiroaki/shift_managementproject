@@ -5,6 +5,7 @@ from django.views.decorators.http import require_POST
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.views.generic import View
+from django.contrib.auth.views import LoginView
 from django.urls import reverse, reverse_lazy
 
 from accounts.models import Userr
@@ -17,6 +18,8 @@ def get_path(request):
     # path_3 = request.build_absolute_uri() #ドメインを含むパス
     return path
 
+class Login(LoginView):
+    template_name = 'accounts/login.html'
 
 def test(request):
     info = Shop_info.objects.get(pk=1)

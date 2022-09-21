@@ -7,7 +7,8 @@ app_name = 'shift'
 
 
 urlpatterns = [
-    path('', views.index, name="index"),
+    # path('', views.index, name="index"),
+    path('', views.Login.as_view(), name="login"),
     path('reserve/', views.ReverseView.as_view(), name='reverse'),
     path('shop_info/', views.shop_info, name="shop_info"),
     
