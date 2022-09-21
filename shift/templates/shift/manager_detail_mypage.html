@@ -37,8 +37,8 @@
                 <tr>
                     <td scope="row">{{ booking_hour_minute }}</td>
                     {% for datetime, book in booking_date2.items %}
-                    <td>   
-                        {% if book == ''%}
+                    <td>
+                        {% if book.attend == ''%}
                         <form method="POST"
                             action="{% url 'shift:manager_holiday' staff_id datetime.year datetime.month datetime.day booking_hour_minute %}">
                             {% csrf_token %}
@@ -47,12 +47,21 @@
                                 <i class="far fa-circle text-info"></i>
                             </button>
                         </form>
-                        {% elif book == "既定人数到達" %}
-                        {% comment %} <p class="mb-0 font-weight-bold text-success">既定人数到達 </p> {% endcomment %}
+                        {% elif book.attend == "false" %} 
+                        <p>選択期限切れ</P>
                         <i class="fas fa-times text-danger"></i>
-                        {% elif book == "False" %} 
-                        <i class="fas fa-times text-danger"></i>
-                        {% else %}
+                        {% elif book.is_max == "既定人数到達" and book.attend == "出勤" %}
+                        <p class="mb-0 font-weight-bold text-success">既定人数到達 </p>
+                        <p class="mb-0 font-weight-bold text-success">出勤</p>
+                        <form method="POST"
+                            action="{% url 'shift:manager_delete' staff_id datetime.year datetime.month datetime.day booking_hour_minute %}">
+                            {% csrf_token %}
+                            <button class="btn btn-outline-danger" type="submit">取消</button>
+                        </form>    
+                        {% elif book.is_max == "既定人数到達" %}
+                        <p class="mb-0 font-weight-bold text-success">既定人数到達 </p>
+                        <i class="fas fa-times text-danger"></i>                        
+                        {% elif book.attend == "出勤" %}
                         <p class="mb-0 font-weight-bold text-success">出勤</p>
                         <form method="POST"
                             action="{% url 'shift:manager_delete' staff_id datetime.year datetime.month datetime.day booking_hour_minute %}">

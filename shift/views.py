@@ -114,19 +114,15 @@ class MyPageView(LoginRequiredMixin, View):
         start_day = days[0]
         end_day = days[-1]
         
-        #店舗営業時間取得
+        #店舗営業情報取得
         store_start_time = Shop_info.objects.get(pk=1).start_workingtime
-        store_end_time =Shop_info.objects.get(pk=1).finish_workingtime
-        
+        store_end_time =Shop_info.objects.get(pk=1).finish_workingtime        
         limit = Shop_info.objects.get(pk=1).deadline_day
-        
-        #1時間当たりシフトに入る人数を取得
         staff_per_hour = Shop_info.objects.get().people_per_hour
         
         calendar1 = {}#全体集計用
         calendar2 = {}#各個人（ログインユーザー）集計用
         now = datetime.now()
-        deadline_time = (datetime(year=year, month=month, day=day, hour=6, minute=0) + timedelta(days = -limit))
         
         # 営業開始時刻～営業終了時刻までのカレンダー作成
         for hour in range(store_start_time.hour, store_end_time.hour+1):
@@ -143,27 +139,33 @@ class MyPageView(LoginRequiredMixin, View):
                 row2 = {}
                 calendar1[hour_minute] = row1
                 calendar2[hour_minute] = row2
+                # 個人用
+                for day_k in days:
+                    row2[day_k] = {}
+                    deadline_time = (datetime(year=int(day_k.year), month=int(day_k.month), day=int(day_k.day), hour=hour, minute=0) + timedelta(days = -limit))
+                    calendar2[hour_minute][day_k]["attend"] =""
+                    calendar2[hour_minute][day_k]["is_max"] =""
+                    # リミット以前の日時にFALSE
+                    if deadline_time < datetime.now():
+                            calendar2[hour_minute][day_k]["attend"] = "false"                                   
+                
+                #全体用
                 for day_k in days:
                     row1[day_k] = ""
                     number = Shift.objects.filter(workingtime = datetime(year=int(day_k.year), month=int(day_k.month), day=int(day_k.day), hour=hour, minute=0)).count()
                     calendar1[hour_minute][day_k] = number
-                    if int(calendar1[hour_minute][day_k]) == int(staff_per_hour):
+                    if int(calendar1[hour_minute][day_k]) >= int(staff_per_hour):
                         calendar1[hour_minute][day_k] = "既定人数到達" 
-                        calendar2[hour_minute][day_k] = "既定人数到達" 
-                for day_k in days:
-                    row2[day_k] = ""
-                    deadline_time = (datetime(year=int(day_k.year), month=int(day_k.month), day=int(day_k.day), hour=hour, minute=0) + timedelta(days = -limit))
-                    if deadline_time < datetime.now() and calendar2[hour_minute][day_k] != "既定人数到達":
-                        calendar2[hour_minute][day_k] = "False"                                    
-                
+                        # スタッフ数が規定人数に到達した際の処理
+                        calendar2[hour_minute][day_k]["is_max"] = "既定人数到達" 
+                    
         start_time = make_aware(datetime.combine(start_day, store_start_time))
         end_time = make_aware(datetime.combine(end_day, store_end_time))
         booking_data1 = Shift.objects.exclude(Q(workingtime__gt=end_time) | Q(workingtime__lt=start_time))#全体集計用
         booking_data2 = staff_data.exclude(Q(workingtime__gt=end_time) | Q(workingtime__lt=start_time))#各個人集計用
         
         
-        # for booking in booking_data2:
-        for booking in staff_data:
+        for booking in booking_data2:
             local_time = localtime(booking.workingtime)
             booking_date = local_time.date()
             booking_hour = str(local_time.hour)
@@ -173,20 +175,8 @@ class MyPageView(LoginRequiredMixin, View):
             if booking_minute == "0":
                 booking_minute = "00"
             booking_hour_minute = booking_hour + ":" + booking_minute            
-            if (booking_hour_minute in calendar2) and (booking_date in calendar2[booking_hour_minute]) and calendar2[booking_hour_minute][booking_date] != "False":
-                print(f"booking_hour_minuteは{booking_hour_minute}で\nbooking_dateは{booking_date}です")
-                calendar2[booking_hour_minute][booking_date] = "出勤"
-        
-        # for booking in booking_data1:
-        #     local_time = localtime(booking.workingtime)
-        #     booking_date = local_time.date()
-        #     booking_hour = str(local_time.hour)
-        #     if len(booking_hour) == 1:
-        #             booking_hour = "0" + booking_hour
-        #     booking_minute = str(local_time.minute)
-        #     if booking_minute == "0":
-        #         booking_minute = "00"
-        #     booking_hour_minute = booking_hour + ":" + booking_minute
+            if (booking_hour_minute in calendar2) and (booking_date in calendar2[booking_hour_minute]) and calendar2[booking_hour_minute][booking_date]["attend"] != "false":
+                calendar2[booking_hour_minute][booking_date]["attend"] = "出勤"
         
         # 背景色の不透明度リストを格納
         opacity_list = [75,50,15,20]
@@ -211,7 +201,6 @@ class MyPageView(LoginRequiredMixin, View):
             'day': day,
             'store_start_time':store_start_time,
             'now': now,
-            'deadline_time':deadline_time,
         }
         if self.request.user.category == 0:
             return render(request, 'shift/mypage.html',context )
@@ -390,8 +379,9 @@ class Staff_Shift(LoginRequiredMixin, View):
         #1時間当たりシフトに入る人数を取得
         staff_per_hour = Shop_info.objects.get().people_per_hour
 
+        calendar1 = {}#全体集計用
         calendar2 = {}#各個人（ログインユーザー）集計用
-        deadline_time = (datetime(year=year, month=month, day=day, hour=6, minute=0) + timedelta(days = -limit))
+        now = datetime.now()
         
         # 営業開始時刻～営業終了時刻までのカレンダー作成
         for hour in range(store_start_time.hour, store_end_time.hour+1):
@@ -404,22 +394,37 @@ class Staff_Shift(LoginRequiredMixin, View):
                 if minute_str == "0":
                     minute_str = "00"
                 hour_minute = hour_str + ":" + minute_str
+                row1 = {}
                 row2 = {}
+                calendar1[hour_minute] = row1
                 calendar2[hour_minute] = row2
-
+                # 個人用
                 for day_k in days:
-                    row2[day_k] = ""
+                    row2[day_k] = {}
                     deadline_time = (datetime(year=int(day_k.year), month=int(day_k.month), day=int(day_k.day), hour=hour, minute=0) + timedelta(days = -limit))
-                    if deadline_time < datetime.now() and calendar2[hour_minute][day_k] != "既定人数到達":
-                        calendar2[hour_minute][day_k] = "False"                                    
+                    calendar2[hour_minute][day_k]["attend"] =""
+                    calendar2[hour_minute][day_k]["is_max"] =""
+                    # リミット以前の日時にFALSE
+                    if deadline_time < datetime.now():
+                            calendar2[hour_minute][day_k]["attend"] = "false"                                   
                 
+                #全体用
+                for day_k in days:
+                    row1[day_k] = ""
+                    number = Shift.objects.filter(workingtime = datetime(year=int(day_k.year), month=int(day_k.month), day=int(day_k.day), hour=hour, minute=0)).count()
+                    calendar1[hour_minute][day_k] = number
+                    if int(calendar1[hour_minute][day_k]) >= int(staff_per_hour):
+                        calendar1[hour_minute][day_k] = "既定人数到達" 
+                        # スタッフ数が規定人数に到達した際の処理
+                        calendar2[hour_minute][day_k]["is_max"] = "既定人数到達" 
+                    
         start_time = make_aware(datetime.combine(start_day, store_start_time))
         end_time = make_aware(datetime.combine(end_day, store_end_time))
         booking_data1 = Shift.objects.exclude(Q(workingtime__gt=end_time) | Q(workingtime__lt=start_time))#全体集計用
         booking_data2 = staff_data.exclude(Q(workingtime__gt=end_time) | Q(workingtime__lt=start_time))#各個人集計用
         
         
-        for booking in staff_data:
+        for booking in booking_data2:
             local_time = localtime(booking.workingtime)
             booking_date = local_time.date()
             booking_hour = str(local_time.hour)
@@ -429,19 +434,8 @@ class Staff_Shift(LoginRequiredMixin, View):
             if booking_minute == "0":
                 booking_minute = "00"
             booking_hour_minute = booking_hour + ":" + booking_minute            
-            if (booking_hour_minute in calendar2) and (booking_date in calendar2[booking_hour_minute]) and calendar2[booking_hour_minute][booking_date] != "False":
-                calendar2[booking_hour_minute][booking_date] = "出勤"
-        
-        for booking in booking_data1:
-            local_time = localtime(booking.workingtime)
-            booking_date = local_time.date()
-            booking_hour = str(local_time.hour)
-            if len(booking_hour) == 1:
-                    booking_hour = "0" + booking_hour
-            booking_minute = str(local_time.minute)
-            if booking_minute == "0":
-                booking_minute = "00"
-            booking_hour_minute = booking_hour + ":" + booking_minute
+            if (booking_hour_minute in calendar2) and (booking_date in calendar2[booking_hour_minute]) and calendar2[booking_hour_minute][booking_date]["attend"] != "false":
+                calendar2[booking_hour_minute][booking_date]["attend"] = "出勤"
         
         context = {
             'staff_id':staff_id,
@@ -461,10 +455,8 @@ class Staff_Shift(LoginRequiredMixin, View):
             'month': month,
             'day': day,
             'store_start_time':store_start_time,
-            'deadline_time':deadline_time,
         }
         path = get_path(request)
-        # if self.request.user.category == 1:
         if "view_only" in path:
             return render(request, 'shift/manager_detail_mypage_view_only.html',context )
         else:

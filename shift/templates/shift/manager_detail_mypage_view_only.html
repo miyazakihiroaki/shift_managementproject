@@ -6,7 +6,7 @@
     <div class="mb-3">
         <h1>{{staff_name_data}}のシフト状況</h1>
         <p>{{ start_day }}～{{ end_day }}</p>
-        <a class="btn btn-warning">編集する（リンクは貼ってないよ）</a>
+        <a class="btn btn-warning" href="{% url 'shift:staff_shift' staff_id year month day %}">編集する</a>
     </div>
 
     <div class="d-flex mb-2">
@@ -20,7 +20,7 @@
         </div>
     </div>
     <div class="mb-3">
-        <table class="table table-bordered bg-light">
+        <table class="table table-bordered bg-light table-responsive">
             <thead class="thead-light">
                 <tr>
                     <th></th>
@@ -38,17 +38,19 @@
                 <tr>
                     <td scope="row">{{ booking_hour_minute }}</td>
                     {% for datetime, book in booking_date2.items %}
-                    <td>   
-                        {% if book == ''%}
-                        {% comment %} <button class="btn btn-outline-success" type="submit">出勤しない</button> {% endcomment %}
-                        <p class="mb-0 font-weight-bold text-success">出勤不可</p>
+                    <td>
+                        {% if book.attend == ''%}
+                        <i class="far fa-circle text-info"></i>
+                        {% elif book.attend == "false" %} 
+                        <p>選択期限切れ</P>
                         <i class="fas fa-times text-danger"></i>
-                        {% elif book == "既定人数到達" %}
+                        {% elif book.is_max == "既定人数到達" and book.attend == "出勤" %}
                         <p class="mb-0 font-weight-bold text-success">既定人数到達 </p>
-                        <i class="fas fa-times text-danger"></i>
-                        {% elif book == "False" %} 
-                        <i class="fas fa-times text-danger"></i>
-                        {% else %}
+                        <p class="mb-0 font-weight-bold text-success">出勤</p> 
+                        {% elif book.is_max == "既定人数到達" %}
+                        <p class="mb-0 font-weight-bold text-success">既定人数到達 </p>
+                        <i class="fas fa-times text-danger"></i>                        
+                        {% elif book.attend == "出勤" %}
                         <p class="mb-0 font-weight-bold text-success">出勤</p>
                         {% endif %}
                     </td>

@@ -2,11 +2,11 @@
 
 {% block content %}
 <p>
-    メモ<br>
+    メモ（今週やったこと）<br>
     <ul>
-        <li>レスポンシブ</li>
+        <li>レスポンシブ（ハンバーガーメニュー）</li>
+        <li>店長ページで編集不可のページを作成</li>
         <li>出勤と規定人数到達を分ける</li>
-        <li></li>
         <li></li>
     </ul>
 </p>
@@ -49,7 +49,7 @@
                     <td scope="row">{{ booking_hour_minute }}</td>
                     {% for datetime, book in booking_date2.items %}
                     <td>
-                        {% if book == ''%}
+                        {% if book.attend == ''%}
                         <form method="POST"
                             action="{% url 'shift:holiday' datetime.year datetime.month datetime.day booking_hour_minute %}">
                             {% csrf_token %}
@@ -58,12 +58,21 @@
                                 <i class="far fa-circle text-info"></i>
                             </button>
                         </form>
-                        {% elif book == "既定人数到達" %}
+                        {% elif book.attend == "false" %} 
+                        <p>選択期限切れ</P>
+                        <i class="fas fa-times text-danger"></i>
+                        {% elif book.is_max == "既定人数到達" and book.attend == "出勤" %}
                         <p class="mb-0 font-weight-bold text-success">既定人数到達 </p>
-                        <i class="fas fa-times text-danger"></i>
-                        {% elif book == "False" %} 
-                        <i class="fas fa-times text-danger"></i>
-                        {% else %}
+                        <p class="mb-0 font-weight-bold text-success">出勤</p>
+                        <form method="POST"
+                            action="{% url 'shift:delete' datetime.year datetime.month datetime.day booking_hour_minute %}">
+                            {% csrf_token %}
+                            <button class="btn btn-outline-danger" type="submit">取消</button>
+                        </form>    
+                        {% elif book.is_max == "既定人数到達" %}
+                        <p class="mb-0 font-weight-bold text-success">既定人数到達 </p>
+                        <i class="fas fa-times text-danger"></i>                        
+                        {% elif book.attend == "出勤" %}
                         <p class="mb-0 font-weight-bold text-success">出勤</p>
                         <form method="POST"
                             action="{% url 'shift:delete' datetime.year datetime.month datetime.day booking_hour_minute %}">
@@ -80,8 +89,8 @@
     </div>
 </div>
 <p>#############################################################################################</p>
-<p>{{now}}</p>
-<p>{{deadline_time}}</p>
+<p>現在時刻{{now}}</p>
+<p>締め切り時刻{{deadline_time}}</p>
 <p>カレンダー1（全体用）の出力結果</p>
 {{calendar1}}  
 
