@@ -8,7 +8,7 @@
     </div>
     <div class="p-4 m-4 bg-light border border-success rounded text-center">
         <h2>{{object.clerkname}}</h2>
-        <img class="d-block mx-auto" src="{{ object.personalimage.url }}" class="img-thumbnail"/>
+        <img class="d-block mx-auto img-fluid" src="{{ object.personalimage.url }}" class="img-thumbnail"/>
         <h4 class="text-dark">メールアドレス：{{object.email}}</h4>
         <p>{{ object.introduction_text }}</p>
         <a href="{% url 'accounts:clerklist' %}" class="btn btn-success"> 一覧へ </a>

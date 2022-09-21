@@ -18,7 +18,7 @@
             <a class="btn btn-warning" href="{% url 'shift:mypage' next_month.year next_month.month next_month.day %}">4週後</a>
         </div>
     </div>
-    <div class="mb-3">
+    <div class="mb-3 table-responsive">
         <table class="table table-bordered bg-light">
             <thead class="thead-light">
                 <tr>
@@ -67,7 +67,7 @@
         </table>
     </div>
 </div>
-<p>#############################################################################################</p>
+{% comment %} <p>#############################################################################################</p>
 <p>{{now}}</p>
 <p>{{deadline_time}}</p>
 <p>カレンダー1（全体用）の出力結果</p>
@@ -75,5 +75,5 @@
 
 <p>#############################################################################################</p>
 <p>カレンダー2（個人用）の出力結果上で出力されてるやつ</p>
-{{calendar2}} 
+{{calendar2}}  {% endcomment %}
 {% endblock %}
