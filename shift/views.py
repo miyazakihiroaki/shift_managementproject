@@ -470,6 +470,7 @@ class Staff_Shift(LoginRequiredMixin, View):
         else:
             return render(request, 'shift/manager_detail_mypage.html',context )
 
+
 def select_staff(request):
     staff_name_datas = Userr.objects.all()
     context = {'staff_name_datas':staff_name_datas}

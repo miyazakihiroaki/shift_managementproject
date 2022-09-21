@@ -1,6 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<p>
+    メモ<br>
+    <ul>
+        <li>レスポンシブ</li>
+        <li>出勤と規定人数到達を分ける</li>
+        <li></li>
+        <li></li>
+    </ul>
+</p>
 <div class="text-center my-5">
     <div class="mb-3">
         <h1>{{staff_name_data.clerkname}}さんのシフト希望登録表</h1>
@@ -19,7 +28,7 @@
         </div>
     </div>
     <div class="mb-3 table-responsive">
-        <table class="table table-bordered bg-light">
+        <table class="table table-bordered bg-light table-hover">
             <thead class="thead-light">
                 <tr>
                     <th></th>
@@ -44,7 +53,10 @@
                         <form method="POST"
                             action="{% url 'shift:holiday' datetime.year datetime.month datetime.day booking_hour_minute %}">
                             {% csrf_token %}
-                            <button class="btn btn-outline-success" type="submit">出勤しない</button>
+                            <button class="btn btn-outline-success" type="submit">
+                                {% comment %} 出勤しない {% endcomment %}
+                                <i class="far fa-circle text-info"></i>
+                            </button>
                         </form>
                         {% elif book == "既定人数到達" %}
                         <p class="mb-0 font-weight-bold text-success">既定人数到達 </p>
@@ -67,7 +79,7 @@
         </table>
     </div>
 </div>
-{% comment %} <p>#############################################################################################</p>
+<p>#############################################################################################</p>
 <p>{{now}}</p>
 <p>{{deadline_time}}</p>
 <p>カレンダー1（全体用）の出力結果</p>
@@ -75,5 +87,5 @@
 
 <p>#############################################################################################</p>
 <p>カレンダー2（個人用）の出力結果上で出力されてるやつ</p>
-{{calendar2}}  {% endcomment %}
+{{calendar2}}
 {% endblock %}

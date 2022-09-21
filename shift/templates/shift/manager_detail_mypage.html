@@ -18,7 +18,7 @@
             <a class="btn btn-success" href="{% url 'shift:staff_shift' staff_id next_month.year next_month.month next_month.day %}">4週後</a>
         </div>
     </div>
-    <div class="mb-3">
+    <div class="mb-3 table-responsive">
         <table class="table table-bordered bg-light">
             <thead class="thead-light">
                 <tr>
@@ -42,10 +42,13 @@
                         <form method="POST"
                             action="{% url 'shift:manager_holiday' staff_id datetime.year datetime.month datetime.day booking_hour_minute %}">
                             {% csrf_token %}
-                            <button class="btn btn-outline-success" type="submit">出勤しない</button>
+                            <button class="btn btn-outline-success" type="submit">
+                                {% comment %} 出勤しない {% endcomment %}
+                                <i class="far fa-circle text-info"></i>
+                            </button>
                         </form>
                         {% elif book == "既定人数到達" %}
-                        <p class="mb-0 font-weight-bold text-success">既定人数到達 </p>
+                        {% comment %} <p class="mb-0 font-weight-bold text-success">既定人数到達 </p> {% endcomment %}
                         <i class="fas fa-times text-danger"></i>
                         {% elif book == "False" %} 
                         <i class="fas fa-times text-danger"></i>
