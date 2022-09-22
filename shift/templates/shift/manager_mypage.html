@@ -5,7 +5,8 @@
 <div class="text-center my-5">
     <div class="mb-3">
         <h1>シフト状況概要</h1>
-        <p>スタッフ数が上限（{{people_per_hour}}人）の半分以下の時間帯にハイライトしています</p>
+        <p>スタッフ数が上限（{{people_per_hour}}人）の半分以下の時間帯にハイライトしています<br>
+        スタッフ数上限に達した時間帯に<i class="far fa-circle text-info"></i>を示しています</p>
         <p>{{ start_day }}～{{ end_day }}</p>
     </div>
 
@@ -44,7 +45,15 @@
                             <form method="POST"
                                 action="{% url 'shift:shift_detail' datetime.year datetime.month datetime.day booking_hour_minute %}">
                                 {% csrf_token %}
+                                {% if book.number == "既定人数到達" %}
+                                <button class="btn btn-outline-dark w-100" type="submit">
+                                    {{people_per_hour}}
+                                    <i class="far fa-circle text-info"></i>
+                                </button>
+                                {% else %}
                                 <button class="btn btn-outline-dark w-100" type="submit">{{book.number}}</button>
+                                {% endif %}
+                                {% comment %} <button class="btn btn-outline-dark w-100" type="submit">{{book.number}}</button> {% endcomment %}
                             </form>
                         </div>
                         {% else %}

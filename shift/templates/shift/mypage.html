@@ -7,7 +7,7 @@
         <li>レスポンシブ（ハンバーガーメニュー）</li>
         <li>店長ページで編集不可のページを作成</li>
         <li>出勤と規定人数到達を分ける</li>
-        <li></li>
+        <li>週給計算</li>
     </ul>
 </p>
 <div class="text-center my-5">
@@ -49,16 +49,7 @@
                     <td scope="row">{{ booking_hour_minute }}</td>
                     {% for datetime, book in booking_date2.items %}
                     <td>
-                        {% if book.attend == ''%}
-                        <form method="POST"
-                            action="{% url 'shift:holiday' datetime.year datetime.month datetime.day booking_hour_minute %}">
-                            {% csrf_token %}
-                            <button class="btn btn-outline-success" type="submit">
-                                {% comment %} 出勤しない {% endcomment %}
-                                <i class="far fa-circle text-info"></i>
-                            </button>
-                        </form>
-                        {% elif book.attend == "false" %} 
+                        {% if book.attend == "false" %} 
                         <p>選択期限切れ</P>
                         <i class="fas fa-times text-danger"></i>
                         {% elif book.is_max == "既定人数到達" and book.attend == "出勤" %}
@@ -78,6 +69,15 @@
                             action="{% url 'shift:delete' datetime.year datetime.month datetime.day booking_hour_minute %}">
                             {% csrf_token %}
                             <button class="btn btn-outline-danger" type="submit">取消</button>
+                        </form>
+                        {% elif book.attend == ''%}
+                        <form method="POST"
+                            action="{% url 'shift:holiday' datetime.year datetime.month datetime.day booking_hour_minute %}">
+                            {% csrf_token %}
+                            <button class="btn btn-outline-success" type="submit">
+                                {% comment %} 出勤しない {% endcomment %}
+                                <i class="far fa-circle text-info"></i>
+                            </button>
                         </form>
                         {% endif %}
                     </td>

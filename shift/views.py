@@ -154,7 +154,7 @@ class MyPageView(LoginRequiredMixin, View):
                     row1[day_k] = ""
                     number = Shift.objects.filter(workingtime = datetime(year=int(day_k.year), month=int(day_k.month), day=int(day_k.day), hour=hour, minute=0)).count()
                     calendar1[hour_minute][day_k] = number
-                    if int(calendar1[hour_minute][day_k]) >= int(staff_per_hour):
+                    if int(calendar1[hour_minute][day_k]) == int(staff_per_hour):
                         calendar1[hour_minute][day_k] = "既定人数到達" 
                         # スタッフ数が規定人数に到達した際の処理
                         calendar2[hour_minute][day_k]["is_max"] = "既定人数到達" 
@@ -305,7 +305,7 @@ class ManagerPageView(LoginRequiredMixin, View):
                     else:
                         calendar1[hour_minute][day_k]["opacity"] = opacity_list[4]    
                     #規定人数到達の確認
-                    if int(calendar1[hour_minute][day_k]["number"]) == int(staff_per_hour):
+                    if int(calendar1[hour_minute][day_k]["number"]) >= int(staff_per_hour):
                         calendar1[hour_minute][day_k]["number"] = "既定人数到達"     
                         
         start_time = make_aware(datetime.combine(start_day, store_start_time))
