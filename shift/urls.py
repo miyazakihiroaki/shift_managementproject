@@ -13,6 +13,9 @@ urlpatterns = [
     path('mypage/<int:year>/<int:month>/<int:day>/', views.MyPageView.as_view(), name='mypage'),
     path('mypage/holiday/<int:year>/<int:month>/<int:day>/<str:hour_minute>/', views.Holiday, name='holiday'),
     path('mypage/delete/<int:year>/<int:month>/<int:day>/<str:hour_minute>/', views.Delete, name='delete'),
+    path('salary/<int:year>/<int:month>/', views.CalculateSalary.as_view(), name="calculate_salary"),
+    path('salary_reserve/', views.SalaryReverseView.as_view(), name='salary_reverse'),
+
     
     #店長専用ページ
     path('manager_page/<int:year>/<int:month>/<int:day>/',views.ManagerPageView.as_view(), name ='manager_page'),

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}給料計算{% endblock%}
+
+{% block content %}
+<div class="text-center">
+    <h1>給料計算</h1>
+</div>
+<div class="d-flex mb-2">
+    <div class="mx-3">
+        <a class="btn btn-warning" href="{% url 'shift:calculate_salary' before_date.year before_date.month %}">前月</a>
+        <a class="btn btn-warning" href="{% url 'shift:calculate_salary' next_date.year next_date.month %}">次月</a>
+    </div>
+</div>
+<div class="p-4 m-4 bg-light border border-success rounded text-center">    
+    {{ user.clerkname }}さんの時給：{{user.hourly_wage}}円<br>
+    {{year}}年{{month}}月に入るシフト数：{{shifts_count}}<br>
+    {{year}}年{{month}}月の給料は{{salary}}円です。
+</div>
+<div class="p-4 m-4 bg-light border border-success rounded text-center">
+    <h5>シフト詳細</h5>
+    {% for shift in shifts%}
+    {{shift.workingtime}}<br>
+    {% endfor %}
+</div>
+{% endblock %}

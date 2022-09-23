@@ -44,6 +44,8 @@ class Userr(AbstractBaseUser):
     
     #管理者のみ閲覧、編集可
     admin_only_text = models.CharField(max_length=200,default = '管理者のみ閲覧可。', null=True,)
+
+    hourly_wage = models.IntegerField('時給',default=1000)
     
     #0:一般店員、1:店長
     category = models.IntegerField('ユーザー種別', default=0)

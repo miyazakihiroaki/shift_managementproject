@@ -249,6 +249,61 @@ def Delete(request, year, month, day, hour_minute):
         start_date = start_date - timedelta(days=weekday + 1)
     return redirect('shift:mypage', year=start_date.year, month=start_date.month, day=start_date.day)
 
+
+#給料計算
+class CalculateSalary(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        #urlから年月を取得
+        year = self.kwargs.get('year')
+        month = self.kwargs.get('month')
+        
+        #日時処理
+        next_year = year
+        before_year = year
+        next_month = month + 1
+        if next_month == 13:
+            next_month = 1
+            next_year = year + 1
+        before_month = month - 1
+        if before_month== 0:
+            before_month = 12
+            before_year = year - 1
+        next_date = date(year=next_year, month=next_month, day = 1)
+        before_date = date(year=before_year, month=before_month, day = 1)
+        
+        #データ検索
+        user = self.request.user
+        month_query = str(month)
+        if len(month_query) == 1:
+            month_query = "0" + month_query
+        shifts = Shift.objects.filter(user_id = user.id, workingtime__contains = f"{year}-{month_query}-")
+        shifts_count = shifts.count()
+        salary = shifts_count*user.hourly_wage
+        context = {'year':year, 'month':month, 'shifts': shifts, 'shifts_count': shifts_count, 'salary':salary, 'next_date': next_date, 'before_date': before_date}
+        return render(request, 'shift/calculatesalary.html',context)
+
+
+#給料取得前に現在年月を取得してカレンダーに渡す
+class SalaryReverseView(View):
+    def get(self, request):
+        
+        if request.user.is_authenticated:
+            user_data = Userr.objects.get(id=request.user.id)
+            # user_data = Userr.objects.get(clerkname = request.user)なんでこれじゃダメなのか？？
+            if self.request.user.category == 0:
+                start_date = date.today()
+                start_date = start_date + timedelta(days=28)
+                weekday = start_date.weekday()
+                # カレンダー日曜日開始
+                if weekday != 6:
+                    start_date = start_date - timedelta(days=weekday + 1)
+                return redirect('shift:calculate_salary', start_date.year, start_date.month)
+    
+        else:
+            user_data = None
+
+        return render(request, 'shift/home.html') 
+    
 # 店長専用
 ###########################################################################################################
 class ManagerPageView(LoginRequiredMixin, View):

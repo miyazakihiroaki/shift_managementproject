@@ -15,6 +15,7 @@ class CustomUserAdmin(UserAdmin):
                 'password',
                 'personalimage',
                 'introduction_text',
+                'hourly_wage',
                 'admin_only_text',
                 'category',
             )
