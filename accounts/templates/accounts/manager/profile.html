@@ -13,7 +13,7 @@
         {% if myinfo_data.personalimage %}
         <img src="{{ myinfo_data.personalimage.url }}" class="img-thumbnail img-fluid"/>
         {% endif %}
-        <h4 class="text-dark">メールアドレス：{{myinfo_data.email}}</h4>
+        <h4 class="text-dark text-break">メールアドレス：{{myinfo_data.email}}</h4>
         <p>{{ myinfo_data.introduction_text }}</p>
         <a href="{% url 'accounts:profile_edit' myinfo_data.pk%}" class="btn btn-primary"> 修正する </a>
     </div>

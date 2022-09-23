@@ -20,43 +20,8 @@ def get_path(request):
 
 class Login(LoginView):
     template_name = 'accounts/login.html'
-
-def test(request):
-    info = Shop_info.objects.get(pk=1)
-    info_1 = info.start_workingtime
-    
-    # info_2 = Userr.objects.filter(clerkname=request.clerkname)[0]
-    info_2 = Userr.objects.all()[0]
-    x = info_2.clerkname
-    
-    info_3 = Shift.objects.first()
-    y = info_3.user.clerkname
     
     
-    
-    # staff_name_data = Shift.objects.filter(user=request.user)[1]
-    staff_name_data = Userr.objects.get(id=2)
-    staff_name_data = staff_name_data.clerkname
-    staff_data =Shift.objects.filter(user_id = 1)
-    
-    context = {'info_1':info_1, 'info':info, 'x':x, 'y': y, 'staff_data':staff_data, 'staff_name_data':staff_name_data}
-    return render(request, 'shift/test.html', context)
-
-#トップページ練習用
-def index(request):
-    if request.user.is_authenticated:
-        staff_data = Shift.objects.filter(user=request.user).first()
-        opacity_list = [75,50,25,10]
-        opacity = {'75': 75, '50': 50, '25': 25, '10': 10}
-        context = {'object':staff_data, 'opacity_list': opacity_list, 'opacity' : opacity}
-        print(opacity_list[0])
-        print(opacity['75'])
-        return render(request, 'shift/home.html', context)
-    else:
-        print("User is not logged in")
-    return render(request, 'accounts/no_login.html')
-    
-
 #店舗詳細画面
 def shop_info(request):
     info = Shop_info.objects.all().order_by('-id').first() # idカラム降順で並び替え
@@ -513,15 +478,26 @@ class Staff_Shift(LoginRequiredMixin, View):
         }
         path = get_path(request)
         if "view_only" in path:
-            return render(request, 'shift/manager_detail_mypage_view_only.html',context )
+            if self.request.user.category == 1:
+                return render(request, 'shift/manager_detail_mypage_view_only.html',context )
+            else:
+                return render(request, 'shift/shift_view_only.html',context )                
+        
         else:
             return render(request, 'shift/manager_detail_mypage.html',context )
 
+                
+
 
 def select_staff(request):
+    staff_data = Userr.objects.get(id=request.user.id)
     staff_name_datas = Userr.objects.all()
     context = {'staff_name_datas':staff_name_datas}
-    return render(request, 'shift/manager_select_staff.html', context)
+    if staff_data.category == 1:
+        return render(request, 'shift/manager_select_staff.html', context)
+    else :
+        return render(request, 'shift/select_staff.html', context)
+        
 
 
 class StaffReverseView(View):
@@ -534,8 +510,11 @@ class StaffReverseView(View):
         # カレンダー日曜日開始
         if weekday != 6:
             start_date = start_date - timedelta(days=weekday + 1)
-            return redirect('shift:staff_shift_view_only', id, start_date.year, start_date.month, start_date.day)
-
+            if self.request.user.category == 1:
+                return redirect('shift:manager_staff_shift_view_only', id, start_date.year, start_date.month, start_date.day)            
+            else:    
+                return redirect('shift:staff_shift_view_only', id, start_date.year, start_date.month, start_date.day)            
+        
         return render(request, 'shift/home.html')
     
 
