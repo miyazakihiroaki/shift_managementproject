@@ -38,18 +38,20 @@
                     <td scope="row">{{ booking_hour_minute }}</td>
                     {% for datetime, book in booking_date2.items %}
                     <td>
-                        {% if book.attend == "false" %} 
-                        <p>選択期限切れ</P>
-                        <i class="fas fa-times text-danger"></i>
+                        {% if book.is_valid == "false" %} 
+                            {% if book.attend == "出勤" %}
+                            <p class="mb-0 font-weight-bold text-success">出勤</p>
+                            {% else %}
+                            <p class="mb-0 font-weight-bold">欠勤</p>
+                            {% endif %}
                         {% elif book.is_max == "既定人数到達" and book.attend == "出勤" %}
-                        <p class="mb-0 font-weight-bold text-success">既定人数到達 </p>
-                        <p class="mb-0 font-weight-bold text-success">出勤</p> 
-                        {% elif book.is_max == "既定人数到達" %}
-                        <p class="mb-0 font-weight-bold text-success">既定人数到達 </p>
-                        <i class="fas fa-times text-danger"></i>                        
+                        <p class="mb-0 font-weight-bold text-success">出勤予定</p>                    
                         {% elif book.attend == "出勤" %}
-                        <p class="mb-0 font-weight-bold text-success">出勤</p>
+                        <p class="mb-0 font-weight-bold text-success">出勤予定</p>
+                        {% elif book.is_max == "規定人数到達" %}
+                        <i class="fas fa-times text-danger"></i>
                         {% elif book.attend == ''%}
+                        <i class="far fa-circle text-info"></i>
                         {% endif %}
                     </td>
                     {% endfor %}

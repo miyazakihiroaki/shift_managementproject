@@ -424,9 +424,10 @@ class Staff_Shift(LoginRequiredMixin, View):
                     deadline_time = (datetime(year=int(day_k.year), month=int(day_k.month), day=int(day_k.day), hour=hour, minute=0) + timedelta(days = -limit))
                     calendar2[hour_minute][day_k]["attend"] =""
                     calendar2[hour_minute][day_k]["is_max"] =""
+                    calendar2[hour_minute][day_k]["is_valid"] =""
                     # リミット以前の日時にFALSE
                     if deadline_time < datetime.now():
-                            calendar2[hour_minute][day_k]["attend"] = "false"                                   
+                            calendar2[hour_minute][day_k]["is_valid"] = "false"                                   
                 
                 #全体用
                 for day_k in days:
