@@ -2,7 +2,7 @@
 
 from django.db import migrations, models
 
-
+import datetime
 class Migration(migrations.Migration):
 
     initial = True
@@ -15,8 +15,10 @@ class Migration(migrations.Migration):
             name='Shop_info',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('start_workingtime', models.TimeField(default='09:00')),
-                ('finish_workingtime', models.TimeField(default='18:00')),
+                ('start_workingtime', models.TimeField(default=datetime.time(9, 0))),
+                # ('start_workingtime', models.TimeField(default='09:00')),
+                ('finish_workingtime', models.TimeField(default=datetime.time(18, 0))),
+                # ('finish_workingtime', models.TimeField(default='18:00')),
                 ('people_per_hour', models.IntegerField(default=5)),
                 ('deadline_day', models.IntegerField(default=30)),
             ],
