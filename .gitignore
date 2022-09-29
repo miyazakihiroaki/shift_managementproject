@@ -10,5 +10,5 @@ __pycache__/
 /static/*
 !/static/.gitkeep
 
-# db.sqlite3
+db.sqlite3
 
