@@ -34,8 +34,9 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = True
 # DEBUG = False
 
+ALLOWED_HOSTS = ['shiftmanagementsystem.herokuapp.com']
 ALLOWED_HOSTS = ['*']
-# ALLOWED_HOSTS = ['shiftmanagementsystem.herokuapp.com']
+
 
 # Application definition
 
