@@ -12,6 +12,13 @@ from accounts.models import Userr
 from shift.models import Shop_info, Shift
 from shift.forms import StaffSelectForm
 
+#店舗固有情報取得
+store_start_time = Shop_info.objects.get(pk=1).start_workingtime
+store_end_time =Shop_info.objects.get(pk=1).finish_workingtime        
+limit = Shop_info.objects.get(pk=1).deadline_day
+staff_per_hour = Shop_info.objects.get().people_per_hour
+now = datetime.now()
+
 def get_path(request):
     path = request.path #ドメインを含まないフルパス
     # path_2 = request.get_full_path() # クエリパラメーターを含むパス
@@ -24,21 +31,22 @@ class Login(LoginView):
     
 #店舗詳細画面
 def shop_info(request):
-    info = Shop_info.objects.all().order_by('-id').first() # idカラム降順で並び替え
-    context = {'object':info}
+    shop_info = Shop_info.objects.all().order_by('-id').first() # idカラム降順で並び替え
+    context = {
+        'object':shop_info
+    }
+    
     if request.user.category == 0:
         return render(request, 'shift/shop_info.html', context)
     else:
         return render(request, 'shift/manager/shop_info.html', context)
         
 
-
 #トップページに行く前に現在日時等を取得してカレンダーに渡す
 class ReverseView(View):
-    def get(self, request):
-        
+    
+    def get(self, request):       
         if request.user.is_authenticated:
-            user_data = Userr.objects.get(id=request.user.id)
             # user_data = Userr.objects.get(clerkname = request.user)なんでこれじゃダメなのか？？
             if self.request.user.category == 0:
                 start_date = date.today()
@@ -70,24 +78,19 @@ class MyPageView(LoginRequiredMixin, View):
         staff_data =Shift.objects.filter(user=request.user)
         staff_name_data = Userr.objects.get(id=request.user.id)
         staff_name_datas = Userr.objects.all()
+        
         #urlから年月日を取得
         year = self.kwargs.get('year')
         month = self.kwargs.get('month')
         day = self.kwargs.get('day')
+        
         start_date = date(year=year, month=month, day=day)
         days = [start_date + timedelta(days=day) for day in range(7)]
         start_day = days[0]
         end_day = days[-1]
         
-        #店舗営業情報取得
-        store_start_time = Shop_info.objects.get(pk=1).start_workingtime
-        store_end_time =Shop_info.objects.get(pk=1).finish_workingtime        
-        limit = Shop_info.objects.get(pk=1).deadline_day
-        staff_per_hour = Shop_info.objects.get().people_per_hour
-        
-        calendar1 = {}#全体集計用
-        calendar2 = {}#各個人（ログインユーザー）集計用
-        now = datetime.now()
+        all_staff_calender = {}#全体集計用
+        staff_calender = {}#各個人（ログインユーザー）集計用
         
         # 営業開始時刻～営業終了時刻までのカレンダー作成
         for hour in range(store_start_time.hour, store_end_time.hour+1):
@@ -102,27 +105,27 @@ class MyPageView(LoginRequiredMixin, View):
                 hour_minute = hour_str + ":" + minute_str
                 row1 = {}
                 row2 = {}
-                calendar1[hour_minute] = row1
-                calendar2[hour_minute] = row2
+                all_staff_calender[hour_minute] = row1
+                staff_calender[hour_minute] = row2
                 # 個人用
                 for day_k in days:
                     row2[day_k] = {}
                     deadline_time = (datetime(year=int(day_k.year), month=int(day_k.month), day=int(day_k.day), hour=hour, minute=0) + timedelta(days = -limit))
-                    calendar2[hour_minute][day_k]["attend"] =""
-                    calendar2[hour_minute][day_k]["is_max"] =""
+                    staff_calender[hour_minute][day_k]["attend"] =""
+                    staff_calender[hour_minute][day_k]["is_max"] =""
                     # リミット以前の日時にFALSE
                     if deadline_time < datetime.now():
-                            calendar2[hour_minute][day_k]["attend"] = "false"                                   
+                            staff_calender[hour_minute][day_k]["attend"] = "false"                                   
                 
                 #全体用
                 for day_k in days:
                     row1[day_k] = ""
                     number = Shift.objects.filter(workingtime = datetime(year=int(day_k.year), month=int(day_k.month), day=int(day_k.day), hour=hour, minute=0)).count()
-                    calendar1[hour_minute][day_k] = number
-                    if int(calendar1[hour_minute][day_k]) == int(staff_per_hour):
-                        calendar1[hour_minute][day_k] = "既定人数到達" 
+                    all_staff_calender[hour_minute][day_k] = number
+                    if int(all_staff_calender[hour_minute][day_k]) == int(staff_per_hour):
+                        all_staff_calender[hour_minute][day_k] = "既定人数到達" 
                         # スタッフ数が規定人数に到達した際の処理
-                        calendar2[hour_minute][day_k]["is_max"] = "既定人数到達" 
+                        staff_calender[hour_minute][day_k]["is_max"] = "既定人数到達" 
                     
         start_time = make_aware(datetime.combine(start_day, store_start_time))
         end_time = make_aware(datetime.combine(end_day, store_end_time))
@@ -140,11 +143,8 @@ class MyPageView(LoginRequiredMixin, View):
             if booking_minute == "0":
                 booking_minute = "00"
             booking_hour_minute = booking_hour + ":" + booking_minute            
-            if (booking_hour_minute in calendar2) and (booking_date in calendar2[booking_hour_minute]) and calendar2[booking_hour_minute][booking_date]["attend"] != "false":
-                calendar2[booking_hour_minute][booking_date]["attend"] = "出勤"
-        
-        # 背景色の不透明度リストを格納
-        opacity_list = [75,50,15,20]
+            if (booking_hour_minute in staff_calender) and (booking_date in staff_calender[booking_hour_minute]) and staff_calender[booking_hour_minute][booking_date]["attend"] != "false":
+                staff_calender[booking_hour_minute][booking_date]["attend"] = "出勤"
         
         context = {
             'staff_data': staff_data,
@@ -152,8 +152,8 @@ class MyPageView(LoginRequiredMixin, View):
             'staff_name_datas':staff_name_datas,
             'people_per_hour': staff_per_hour,
             'booking_data1': booking_data1,
-            'calendar1': calendar1,
-            'calendar2': calendar2,
+            'calendar1': all_staff_calender,
+            'calendar2': staff_calender,
             'days': days,
             'start_day': start_day,
             'end_day': end_day,
@@ -167,6 +167,7 @@ class MyPageView(LoginRequiredMixin, View):
             'store_start_time':store_start_time,
             'now': now,
         }
+        
         if self.request.user.category == 0:
             return render(request, 'shift/mypage.html',context )
         
@@ -174,7 +175,6 @@ class MyPageView(LoginRequiredMixin, View):
 #出勤時間登録
 @require_POST
 def Holiday(request, year, month, day, hour_minute):
-    staff_data = Shift.objects.filter(user=request.user).first()
     staff_name_data = Userr.objects.get(id=request.user.id)
     hour = int(hour_minute[0:2])
     minute = int(hour_minute[3:5])
@@ -183,7 +183,6 @@ def Holiday(request, year, month, day, hour_minute):
     # 出勤時間をShiftモデルに追加
     Shift.objects.create(
         user = staff_name_data,
-        # user = staff_data.user,
         workingtime=start_time,
     )
 
@@ -218,6 +217,7 @@ def Delete(request, year, month, day, hour_minute):
 #給料計算
 class CalculateSalary(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
+        
         #urlから年月を取得
         year = self.kwargs.get('year')
         month = self.kwargs.get('month')
@@ -241,10 +241,21 @@ class CalculateSalary(LoginRequiredMixin, View):
         month_query = str(month)
         if len(month_query) == 1:
             month_query = "0" + month_query
+            
         shifts = Shift.objects.filter(user_id = user.id, workingtime__contains = f"{year}-{month_query}-")
         shifts_count = shifts.count()
         salary = shifts_count*user.hourly_wage
-        context = {'year':year, 'month':month, 'shifts': shifts, 'shifts_count': shifts_count, 'salary':salary, 'next_date': next_date, 'before_date': before_date}
+        
+        context = {
+            'year':year,
+            'month':month,
+            'shifts': shifts,
+            'shifts_count': shifts_count, 
+            'salary':salary, 
+            'next_date': next_date,
+            'before_date': before_date
+        }
+        
         return render(request, 'shift/calculatesalary.html',context)
 
 
@@ -254,7 +265,6 @@ class SalaryReverseView(View):
         
         if request.user.is_authenticated:
             user_data = Userr.objects.get(id=request.user.id)
-            # user_data = Userr.objects.get(clerkname = request.user)なんでこれじゃダメなのか？？
             if self.request.user.category == 0:
                 start_date = date.today()
                 start_date = start_date + timedelta(days=28)
@@ -273,27 +283,22 @@ class SalaryReverseView(View):
 ###########################################################################################################
 class ManagerPageView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
+        
         #urlから取得
         year = self.kwargs.get('year')
         month = self.kwargs.get('month')
         day = self.kwargs.get('day')
+        
         start_date = date(year=year, month=month, day=day)
         days = [start_date + timedelta(days=day) for day in range(7)]
         start_day = days[0]
         end_day = days[-1]
-        
-        
-        #店舗情報取得
-        store_start_time = Shop_info.objects.get(pk=1).start_workingtime
-        store_end_time =Shop_info.objects.get(pk=1).finish_workingtime
-        limit = Shop_info.objects.get(pk=1).deadline_day
-        staff_per_hour = Shop_info.objects.get().people_per_hour
 
         deadline_time = (datetime(year=year, month=month, day=day, hour=6, minute=0) + timedelta(days = -limit))
         
         # 背景色の不透明度リストを格納
         opacity_list = [75,50,25,10, 0]
-        calendar1 = {}#全体集計用
+        all_staff_calender = {}#全体集計用
         for hour in range(store_start_time.hour, store_end_time.hour+1):
             
             if time(hour=hour, minute=0) <= store_end_time:
@@ -305,11 +310,11 @@ class ManagerPageView(LoginRequiredMixin, View):
                     minute_str = "00"
                 hour_minute = hour_str + ":" + minute_str
                 row1 = {}
-                calendar1[hour_minute] = row1
+                all_staff_calender[hour_minute] = row1
                 for day_k in days:
                     row1[day_k] = {}
                     number = Shift.objects.filter(workingtime = datetime(year=int(day_k.year), month=int(day_k.month), day=int(day_k.day), hour=hour, minute=0)).count()
-                    calendar1[hour_minute][day_k]["number"] = number
+                    all_staff_calender[hour_minute][day_k]["number"] = number
                     # #不透明度決定
                     # if number/staff_per_hour < 0.4:
                     #     calendar1[hour_minute][day_k]["opacity"] = opacity_list[0]
@@ -321,32 +326,21 @@ class ManagerPageView(LoginRequiredMixin, View):
                     #     calendar1[hour_minute][day_k]["opacity"] = opacity_list[3]
                     
                     if number/staff_per_hour < 0.5:
-                        calendar1[hour_minute][day_k]["opacity"] = opacity_list[2]
+                        all_staff_calender[hour_minute][day_k]["opacity"] = opacity_list[2]
                     else:
-                        calendar1[hour_minute][day_k]["opacity"] = opacity_list[4]    
+                        all_staff_calender[hour_minute][day_k]["opacity"] = opacity_list[4]    
                     #規定人数到達の確認
-                    if int(calendar1[hour_minute][day_k]["number"]) >= int(staff_per_hour):
-                        calendar1[hour_minute][day_k]["number"] = "既定人数到達"     
+                    if int(all_staff_calender[hour_minute][day_k]["number"]) >= int(staff_per_hour):
+                        all_staff_calender[hour_minute][day_k]["number"] = "既定人数到達"     
                         
         start_time = make_aware(datetime.combine(start_day, store_start_time))
         end_time = make_aware(datetime.combine(end_day, store_end_time))
         booking_data1 = Shift.objects.exclude(Q(workingtime__gt=end_time) | Q(workingtime__lt=start_time))#全体集計用
         
-        for booking in booking_data1:
-            local_time = localtime(booking.workingtime)
-            booking_date = local_time.date()
-            booking_hour = str(local_time.hour)
-            if len(booking_hour) == 1:
-                    booking_hour = "0" + booking_hour
-            booking_minute = str(local_time.minute)
-            if booking_minute == "0":
-                booking_minute = "00"
-            booking_hour_minute = booking_hour + ":" + booking_minute
-        
         context = {
             'people_per_hour': staff_per_hour,
             'booking_data1': booking_data1,
-            'calendar1': calendar1,
+            'calendar1': all_staff_calender,
             'days': days,
             'start_day': start_day,
             'end_day': end_day,
@@ -361,7 +355,9 @@ class ManagerPageView(LoginRequiredMixin, View):
             'deadline_time':deadline_time,
         }
         # print(calendar1)
+        
         return render(request, 'shift/manager_mypage.html',context )
+
         
 def shift_detail(request, year, month, day, hour_minute):
     hour = int(hour_minute[0:2])
@@ -369,18 +365,24 @@ def shift_detail(request, year, month, day, hour_minute):
     start_time = make_aware(datetime(year=year, month=month, day=day, hour=hour, minute=minute))
     booking_data =Shift.objects.filter(workingtime=start_time)
     form = StaffSelectForm(request.POST)
-    context = {'booking_data':booking_data, 'start_time':start_time, 'form':form,}
+    context = {
+        'booking_data':booking_data, 
+        'start_time':start_time,
+        'form':form
+    }
     
     return render(request, 'shift/shift_detail.html',context )
 
 
 class Staff_Shift(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
+        
         #urlから取得
         staff_id = self.kwargs.get('pk')
         year = self.kwargs.get('year')
         month = self.kwargs.get('month')
         day = self.kwargs.get('day')
+        
         start_date = date(year=year, month=month, day=day)
         days = [start_date + timedelta(days=day) for day in range(7)]
         start_day = days[0]
@@ -389,20 +391,10 @@ class Staff_Shift(LoginRequiredMixin, View):
         staff_data = Shift.objects.filter(user_id=staff_id)
         staff_name_data = Userr.objects.get(id=staff_id)
         staff_name_data = staff_name_data.clerkname
-        
-        #店舗営業時間取得
-        store_start_time = Shop_info.objects.get(pk=1).start_workingtime
-        store_end_time =Shop_info.objects.get(pk=1).finish_workingtime
-        
-        limit = Shop_info.objects.get(pk=1).deadline_day
-        
-        #1時間当たりシフトに入る人数を取得
-        staff_per_hour = Shop_info.objects.get().people_per_hour
 
-        calendar1 = {}#全体集計用
-        calendar2 = {}#各個人（ログインユーザー）集計用
-        now = datetime.now()
-        
+        all_staff_calender = {}#全体集計用
+        staff_calender = {}#各個人（ログインユーザー）集計用
+
         # 営業開始時刻～営業終了時刻までのカレンダー作成
         for hour in range(store_start_time.hour, store_end_time.hour+1):
             
@@ -416,28 +408,28 @@ class Staff_Shift(LoginRequiredMixin, View):
                 hour_minute = hour_str + ":" + minute_str
                 row1 = {}
                 row2 = {}
-                calendar1[hour_minute] = row1
-                calendar2[hour_minute] = row2
+                all_staff_calender[hour_minute] = row1
+                staff_calender[hour_minute] = row2
                 # 個人用
                 for day_k in days:
                     row2[day_k] = {}
                     deadline_time = (datetime(year=int(day_k.year), month=int(day_k.month), day=int(day_k.day), hour=hour, minute=0) + timedelta(days = -limit))
-                    calendar2[hour_minute][day_k]["attend"] =""
-                    calendar2[hour_minute][day_k]["is_max"] =""
-                    calendar2[hour_minute][day_k]["is_valid"] =""
+                    staff_calender[hour_minute][day_k]["attend"] =""
+                    staff_calender[hour_minute][day_k]["is_max"] =""
+                    staff_calender[hour_minute][day_k]["is_valid"] =""
                     # リミット以前の日時にFALSE
                     if deadline_time < datetime.now():
-                            calendar2[hour_minute][day_k]["is_valid"] = "false"                                   
+                            staff_calender[hour_minute][day_k]["is_valid"] = "false"                                   
                 
                 #全体用
                 for day_k in days:
                     row1[day_k] = ""
                     number = Shift.objects.filter(workingtime = datetime(year=int(day_k.year), month=int(day_k.month), day=int(day_k.day), hour=hour, minute=0)).count()
-                    calendar1[hour_minute][day_k] = number
-                    if int(calendar1[hour_minute][day_k]) >= int(staff_per_hour):
-                        calendar1[hour_minute][day_k] = "既定人数到達" 
+                    all_staff_calender[hour_minute][day_k] = number
+                    if int(all_staff_calender[hour_minute][day_k]) >= int(staff_per_hour):
+                        all_staff_calender[hour_minute][day_k] = "既定人数到達" 
                         # スタッフ数が規定人数に到達した際の処理
-                        calendar2[hour_minute][day_k]["is_max"] = "既定人数到達" 
+                        staff_calender[hour_minute][day_k]["is_max"] = "既定人数到達" 
                     
         start_time = make_aware(datetime.combine(start_day, store_start_time))
         end_time = make_aware(datetime.combine(end_day, store_end_time))
@@ -455,8 +447,8 @@ class Staff_Shift(LoginRequiredMixin, View):
             if booking_minute == "0":
                 booking_minute = "00"
             booking_hour_minute = booking_hour + ":" + booking_minute            
-            if (booking_hour_minute in calendar2) and (booking_date in calendar2[booking_hour_minute]) and calendar2[booking_hour_minute][booking_date]["attend"] != "false":
-                calendar2[booking_hour_minute][booking_date]["attend"] = "出勤"
+            if (booking_hour_minute in staff_calender) and (booking_date in staff_calender[booking_hour_minute]) and staff_calender[booking_hour_minute][booking_date]["attend"] != "false":
+                staff_calender[booking_hour_minute][booking_date]["attend"] = "出勤"
         
         context = {
             'staff_id':staff_id,
@@ -464,7 +456,7 @@ class Staff_Shift(LoginRequiredMixin, View):
             'staff_name_data':staff_name_data,
             'people_per_hour': staff_per_hour,
             'booking_data2': booking_data2,
-            'calendar2': calendar2,
+            'calendar2': staff_calender,
             'days': days,
             'start_day': start_day,
             'end_day': end_day,
@@ -485,15 +477,16 @@ class Staff_Shift(LoginRequiredMixin, View):
                 return render(request, 'shift/shift_view_only.html',context )                
         
         else:
-            return render(request, 'shift/manager_detail_mypage.html',context )
-
-                
+            return render(request, 'shift/manager_detail_mypage.html',context )                
 
 
 def select_staff(request):
     staff_data = Userr.objects.get(id=request.user.id)
     staff_name_datas = Userr.objects.all()
-    context = {'staff_name_datas':staff_name_datas}
+    context = {
+        'staff_name_datas':staff_name_datas
+    }
+    
     if staff_data.category == 1:
         return render(request, 'shift/manager_select_staff.html', context)
     else :
@@ -503,8 +496,10 @@ def select_staff(request):
 
 class StaffReverseView(View):
     def get(self, request, *args, **kwargs):
+        
         #urlからスタッフidを取得
         id = self.kwargs.get('pk')
+        
         start_date = date.today()
         start_date = start_date + timedelta(days=28)
         weekday = start_date.weekday()
@@ -531,6 +526,7 @@ def Manager_Holiday(request, pk, year, month, day, hour_minute):
         user = staff_data.user,
         workingtime=start_time,
     )
+    
     start_date = date(year=year, month=month, day=day)
     weekday = start_date.weekday()
     # カレンダー日曜日開始
@@ -545,10 +541,10 @@ def Manager_Delete(request, pk, year, month, day, hour_minute):
     hour = int(hour_minute[0:2])
     minute = int(hour_minute[3:5])
     start_time = make_aware(datetime(year=year, month=month, day=day, hour=hour, minute=minute))
-    booking_data = Shift.objects.filter(user=staff_data.user)
-    booking_data =booking_data.filter(workingtime=start_time)
+    shift_data = Shift.objects.filter(user=staff_data.user, workingtime=start_time)
+    
     # シフト削除
-    booking_data.delete()
+    shift_data.delete()
 
     start_date = date(year=year, month=month, day=day)
     weekday = start_date.weekday()

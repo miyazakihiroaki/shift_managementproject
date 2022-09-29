@@ -3,8 +3,8 @@ from django.contrib.auth.views import LoginView, LogoutView
 
 from . import views
 
-app_name = 'shift'
 
+app_name = 'shift'
 
 urlpatterns = [
     path('', views.Login.as_view(), name="login"),
@@ -13,8 +13,8 @@ urlpatterns = [
     path('mypage/<int:year>/<int:month>/<int:day>/', views.MyPageView.as_view(), name='mypage'),
     path('mypage/holiday/<int:year>/<int:month>/<int:day>/<str:hour_minute>/', views.Holiday, name='holiday'),
     path('mypage/delete/<int:year>/<int:month>/<int:day>/<str:hour_minute>/', views.Delete, name='delete'),
-    path('salary/<int:year>/<int:month>/', views.CalculateSalary.as_view(), name="calculate_salary"),
-    path('salary_reserve/', views.SalaryReverseView.as_view(), name='salary_reverse'),
+    path('mypage/salary/<int:year>/<int:month>/', views.CalculateSalary.as_view(), name="calculate_salary"),
+    path('mypage/salary_reserve/', views.SalaryReverseView.as_view(), name='salary_reverse'),
     path('select_staff/',views.select_staff, name ='select_staff'),
     path('staff_shift/<int:pk>/<int:year>/<int:month>/<int:day>/view_only/',views.Staff_Shift.as_view(), name ='staff_shift_view_only'),
 

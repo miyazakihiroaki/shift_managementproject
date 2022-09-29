@@ -26,24 +26,16 @@ class UserManager(BaseUserManager):
 # カスタムユーザーモデル
 class Userr(AbstractBaseUser):
     
-    clerkname = models.CharField(
-        max_length=20,
-        unique=True,
-        null=True,
-    )
+    clerkname = models.CharField('名前',max_length=20,unique=True,null=True)
     
-    email = models.EmailField(
-        max_length=255,
-        # emailの重複を防ぐ
-        unique=True,
-    )
+    email = models.EmailField('メールアドレス',max_length=255,unique=True,)
     
-    personalimage = models.ImageField(upload_to='media',verbose_name='プロフィール画像',null = True, blank = True)
+    personalimage = models.ImageField('プロフィール画像',upload_to='media',null = True, blank = True)
 
-    introduction_text = models.CharField(max_length=200, default = '自己紹介文')
+    introduction_text = models.CharField('自己紹介文',max_length=200, default = '自己紹介文')
     
     #管理者のみ閲覧、編集可
-    admin_only_text = models.CharField(max_length=200,default = '管理者のみ閲覧可。', null=True,)
+    admin_only_text = models.CharField('管理者用メモ',max_length=200,default = '管理者のみ閲覧可。', null=True,)
 
     hourly_wage = models.IntegerField('時給',default=1000)
     
