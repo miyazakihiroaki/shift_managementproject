@@ -13,16 +13,16 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        # migrations.CreateModel(
-        #     name='Account',
-        #     fields=[
-        #         ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-        #         ('last_name', models.CharField(max_length=100)),
-        #         ('first_name', models.CharField(max_length=100)),
-        #         ('account_image', models.ImageField(blank=True, upload_to='profile_pics')),
-        #         ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-        #     ],
-        # ),
+        migrations.CreateModel(
+            name='Account',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('last_name', models.CharField(max_length=100)),
+                ('first_name', models.CharField(max_length=100)),
+                ('account_image', models.ImageField(blank=True, upload_to='profile_pics')),
+                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
         migrations.CreateModel(
             name='Userr',
             fields=[
@@ -39,17 +39,17 @@ class Migration(migrations.Migration):
                 'abstract': False,
             },
         ),
-        migrations.CreateModel(
-            name='Account',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('last_name', models.CharField(max_length=100)),
-                ('first_name', models.CharField(max_length=100)),
-                ('account_image', models.ImageField(blank=True, upload_to='profile_pics')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-            ],
-        ),
-        migrations.DeleteModel(
-            name='User',
-        ),
+        # migrations.CreateModel(
+        #     name='Account',
+        #     fields=[
+        #         ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+        #         ('last_name', models.CharField(max_length=100)),
+        #         ('first_name', models.CharField(max_length=100)),
+        #         ('account_image', models.ImageField(blank=True, upload_to='profile_pics')),
+        #         ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+        #     ],
+        # ),
+        # migrations.DeleteModel(
+        #     name='User',
+        # ),
     ]
