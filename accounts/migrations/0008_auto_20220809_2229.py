@@ -23,6 +23,9 @@ class Migration(migrations.Migration):
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
+        migrations.DeleteModel(
+            name='User',
+        ),
         migrations.CreateModel(
             name='Userr',
             fields=[
