@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 
 {% block title %}新規登録完了{% endblock%}
-{% block h1 %}新規登録完了しました。ログインしましょう！！！{% endblock%}
 
 {% block content %}
-<a  class="btn btn-primary" href="{% url 'accounts:login' %}"> ログインする </a>
+<div class="text-center">
+    <h1>新規登録完了しました。ログインしましょう！！！</h1>
+    <a  class="btn btn-success mt-2" href="{% url 'accounts:login' %}"> ログインする </a>
+</div>
 {% endblock %}

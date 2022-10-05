@@ -163,14 +163,39 @@ LOGOUT_REDIRECT_URL = 'accounts:login'
 #自ら定義したモデルを認証に使用する
 AUTH_USER_MODEL = 'accounts.Userr'
 
+# --------- massage tab with bootstrap alert class ---------------------
+from django.contrib import messages
+MESSAGE_TAGS = {
+    messages.ERROR: 'rounded-0 alert alert-danger',
+    messages.WARNING: 'rounded-0 alert alert-warning',
+    messages.SUCCESS: 'rounded-0 alert alert-success',
+    messages.INFO: 'rounded-0 alert alert-info',
+    messages.DEBUG: 'rounded-0 alert alert-secondary',
+}
+# --------- massage tab with bootstrap alert class ---------------------
 
-# --------- massage tab with bootstrap alert class ---------------------
-# from django.contrib import messages
-# MESSAGE_TAGS = {
-#     messages.ERROR: 'rounded-0 alert alert-danger',
-#     messages.WARNING: 'rounded-0 alert alert-warning',
-#     messages.SUCCESS: 'rounded-0 alert alert-success',
-#     messages.INFO: 'rounded-0 alert alert-info',
-#     messages.DEBUG: 'rounded-0 alert alert-secondary',
-# }
-# --------- massage tab with bootstrap alert class ---------------------
+
+# # SendGrid関係
+# EMAIL_BACKEND = 'sendgrid_backend.SendgridBackend'
+# # 送信元メールアドレス
+# DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
+# # SendGridのAPIキー
+# SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
+
+# # ローカル用
+# SENDGRID_SANDBOX_MODE_IN_DEBUG = True
+# # 本番環境用
+# # SENDGRID_SANDBOX_MODE_IN_DEBUG = False
+
+# # URLのトラッキングをOFF
+# SENDGRID_TRACK_CLICKS_PLAIN = False
+# # ターミナルに表示
+# SENDGRID_ECHO_TO_STDOUT = True
+
+SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
+
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST_USER = 'apikey' # this is exactly the value 'apikey'
+EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True

@@ -1,16 +1,19 @@
 from datetime import datetime, date, time, timedelta, timezone
 from django.utils.timezone import localtime, make_aware
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.views.generic import View
 from django.contrib.auth.views import LoginView
 from django.urls import reverse, reverse_lazy
+from django.core.mail import send_mail
 
 from accounts.models import Userr
 from shift.models import Shop_info, Shift
 from shift.forms import StaffSelectForm
+
 
 #店舗固有情報取得
 store_start_time = Shop_info.objects.get(pk=1).start_workingtime
@@ -19,17 +22,20 @@ limit = Shop_info.objects.get(pk=1).deadline_day
 staff_per_hour = Shop_info.objects.get().people_per_hour
 now = datetime.now()
 
+
 def get_path(request):
     path = request.path #ドメインを含まないフルパス
     # path_2 = request.get_full_path() # クエリパラメーターを含むパス
     # path_3 = request.build_absolute_uri() #ドメインを含むパス
     return path
 
+
 class Login(LoginView):
     template_name = 'accounts/login.html'
     
     
 #店舗詳細画面
+@login_required
 def shop_info(request):
     shop_info = Shop_info.objects.all().order_by('-id').first() # idカラム降順で並び替え
     context = {
@@ -69,7 +75,7 @@ class ReverseView(View):
         else:
             user_data = None
 
-        return render(request, 'shift/home.html')
+        return render(request, 'accounts/login.html')
 
 
 #カレンダー関係
@@ -260,7 +266,7 @@ class CalculateSalary(LoginRequiredMixin, View):
 
 
 #給料取得前に現在年月を取得してカレンダーに渡す
-class SalaryReverseView(View):
+class SalaryReverseView(LoginRequiredMixin, View):
     def get(self, request):
         
         if request.user.is_authenticated:
@@ -480,6 +486,7 @@ class Staff_Shift(LoginRequiredMixin, View):
             return render(request, 'shift/manager_detail_mypage.html',context )                
 
 
+@login_required
 def select_staff(request):
     staff_data = Userr.objects.get(id=request.user.id)
     staff_name_datas = Userr.objects.all()
@@ -552,3 +559,5 @@ def Manager_Delete(request, pk, year, month, day, hour_minute):
     if weekday != 6:
         start_date = start_date - timedelta(days=weekday + 1)
     return redirect('shift:staff_shift', pk, start_date.year, start_date.month, start_date.day)
+
+

@@ -5,7 +5,12 @@ from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.views.generic import ListView, DetailView, UpdateView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse, reverse_lazy 
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse, reverse_lazy
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+
+import os 
 
 from .models import Userr
 from .forms import UserCreationForm, ProfileForm
@@ -18,14 +23,30 @@ class Login(LoginView):
         
 #新規店員登録
 def signup(request):
-    context = {}
     if request.method == 'POST':
         form = UserCreationForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save(commit=False)
+            email = str(form.cleaned_data['email'])
+            clerkname = str(form.cleaned_data['clerkname'])
             user.save()
-            return redirect('accounts:finish-signup')       
-    return render(request, 'accounts/sigup.html', context)
+            context = {'email':email, 'clerkname': clerkname}
+            print(context)
+            
+            # 題名（subject）：文字列
+            # 本文（message）：文字列
+            # 送信元アドレス（from_email）：文字列
+            # 送信先アドレス（recipient_list）：リスト
+            send_mail(
+                    '新規登録完了のお知らせ',
+                    render_to_string("accounts/mailers/finish_signup.txt", context),
+                    os.getenv('DEFAULT_FROM_EMAIL'),
+                    [email],
+                    fail_silently=False,
+                )
+            
+            return redirect('accounts:finish-signup')      
+    return render(request, 'accounts/sigup.html')
 
 
 # 新規登録完了画面
@@ -34,9 +55,10 @@ class FinishSignupView(TemplateView):
 
 
 #店員一覧画面（スタッフ）
-class ListClerkView(ListView):
+class ListClerkView(LoginRequiredMixin, ListView):
     template_name = 'accounts/clerk_list.html'
     model = Userr
+
     
 #店員一覧画面（店長）
 class ListClerkView_Manager(ListView):
@@ -51,6 +73,7 @@ class DetailClerkView(DetailView):
     
 
 #ログイン者の情報表示
+@login_required
 def myinfo(request):
     myinfo_data = Userr.objects.get(id=request.user.id)
     context = {'myinfo_data':myinfo_data}
@@ -105,15 +128,3 @@ class UpdateProfileView(LoginRequiredMixin, UpdateView):
     fields = ('clerkname', 'email', 'personalimage', 'introduction_text')
     template_name = 'accounts/profile_edit.html'
     success_url = reverse_lazy('accounts:profile')
-    # 操作が完了した後にどこのページに飛ぶのかを決める
-    # success_url = reverse_lazy('list-book')
-    # def get_object(self, queryset=None):
-    #     obj = super().get_object(queryset)
-        
-    #     if obj.user != self.request.user:
-    #         raise PermissionDenied
-        
-    #     return obj
-    
-    # def get_success_url(self):
-    #     return reverse('accounts:profile')
