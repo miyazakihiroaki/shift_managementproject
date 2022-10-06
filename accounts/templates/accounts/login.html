@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container ">
+<div class="container w-100">
     <div class="row">
         <div class="col-lg-3 m-auto ">
             <h1 class="display-10 font-italic text-center"><a href="/" class="text-decoration-none text-success">SHIFT_MANAGEMENT SYSTEM</a></h1>
@@ -30,6 +30,7 @@
                 <div class="form-label-group my-3">
                     <p>パスワード</p>
                     <input type="password" id="id_password" name="password" class="form-control" placeholder="Password" required>
+                    <p><a href="{% url 'accounts:password_reset' %}">Forgot Your Password?</a></p> 
                 </div>
 
                 <button class="btn btn-primary btn-block my-3" type="submit">ログイン</button>

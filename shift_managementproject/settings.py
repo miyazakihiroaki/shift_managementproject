@@ -163,17 +163,6 @@ LOGOUT_REDIRECT_URL = 'accounts:login'
 #自ら定義したモデルを認証に使用する
 AUTH_USER_MODEL = 'accounts.Userr'
 
-# --------- massage tab with bootstrap alert class ---------------------
-from django.contrib import messages
-MESSAGE_TAGS = {
-    messages.ERROR: 'rounded-0 alert alert-danger',
-    messages.WARNING: 'rounded-0 alert alert-warning',
-    messages.SUCCESS: 'rounded-0 alert alert-success',
-    messages.INFO: 'rounded-0 alert alert-info',
-    messages.DEBUG: 'rounded-0 alert alert-secondary',
-}
-# --------- massage tab with bootstrap alert class ---------------------
-
 
 # # SendGrid関係
 # EMAIL_BACKEND = 'sendgrid_backend.SendgridBackend'

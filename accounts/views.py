@@ -1,3 +1,4 @@
+from django.contrib.auth import views as auth_views
 from django.views import View
 from django.shortcuts import render, redirect
 from django.contrib.auth.views import LoginView
@@ -9,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse, reverse_lazy
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
+# from allauth.account import views
 
 import os 
 
@@ -128,3 +130,21 @@ class UpdateProfileView(LoginRequiredMixin, UpdateView):
     fields = ('clerkname', 'email', 'personalimage', 'introduction_text')
     template_name = 'accounts/profile_edit.html'
     success_url = reverse_lazy('accounts:profile')
+    
+
+# class PasswordResetView(PasswordContextMixin, FormView):
+#     email_template_name = 'registration/password_reset_email.html'
+#     extra_email_context = None
+#     form_class = PasswordResetForm
+#     from_email = None
+#     html_email_template_name = None
+#     subject_template_name = 'registration/password_reset_subject.txt'
+#     success_url = reverse_lazy('password_reset_done')
+#     template_name = 'registration/password_reset_form.html'
+#     title = _('Password reset')
+#     token_generator = default_token_generator
+    
+
+# class PasswordResetDoneView(PasswordContextMixin, TemplateView):
+#     template_name = 'registration/password_reset_done.html'
+#     title = _('Password reset sent')
