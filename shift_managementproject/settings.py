@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     
     'accounts.apps.AccountsConfig',
     'shift.apps.ShiftConfig',
+    'allauth', 
+    'allauth.account',
 ]
 
 MIDDLEWARE = [
@@ -125,6 +127,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
 LANGUAGE_CODE = 'ja'
+# LANGUAGE_CODE = 'en'
 
 TIME_ZONE = 'Asia/Tokyo'
 

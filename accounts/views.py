@@ -132,19 +132,21 @@ class UpdateProfileView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('accounts:profile')
     
 
-# class PasswordResetView(PasswordContextMixin, FormView):
-#     email_template_name = 'registration/password_reset_email.html'
-#     extra_email_context = None
-#     form_class = PasswordResetForm
-#     from_email = None
-#     html_email_template_name = None
-#     subject_template_name = 'registration/password_reset_subject.txt'
-#     success_url = reverse_lazy('password_reset_done')
-#     template_name = 'registration/password_reset_form.html'
-#     title = _('Password reset')
-#     token_generator = default_token_generator
-    
+# class PasswordResetView(views.PasswordResetView):
+#     template_name = 'accounts/password_reset.html'
 
-# class PasswordResetDoneView(PasswordContextMixin, TemplateView):
-#     template_name = 'registration/password_reset_done.html'
-#     title = _('Password reset sent')
+
+# class PasswordResetDoneView(views.PasswordResetDoneView):
+#     template_name = 'accounts/password_reset_done.html'
+
+
+# class PasswordResetFromKeyView(views.PasswordResetFromKeyView):
+#     template_name = 'accounts/password_reset_from_key.html'
+
+
+# class PasswordResetFromKeyDoneView(views.PasswordResetFromKeyDoneView):
+#     template_name = 'accounts/password_reset_from_key_done.html'
+
+
+# class PasswordChangeView(views.PasswordChangeView):
+#     template_name = 'accounts/password_change.html'

@@ -1,5 +1,5 @@
 from django.contrib.auth import views as auth_views
-from django.urls import path
+from django.urls import path, re_path
 from django.contrib.auth.views import LoginView, LogoutView
 from django.conf.urls.static import static
 from django.conf import settings
@@ -20,7 +20,7 @@ urlpatterns = [
     path('finish_signup', views.FinishSignupView.as_view(), name="finish-signup"),
     
     #パスワードリセット関係
-    path('password_reset_form/', auth_views.PasswordResetView.as_view(template_name='registration/password_reset.html', from_email=' office54@office54.net '), name='password_reset'),
+    path('password_reset_form/', auth_views.PasswordResetView.as_view(template_name='registration/password_reset.html', from_email='h12.miyazakihiroaki@gmail.com'), name='password_reset'),
     path('password_reset_done/', auth_views.PasswordResetDoneView.as_view(template_name='registration/password_reset_mail_done.html'), name='password_reset_done'),
     path('password_reset/<str:uidb64>/<str:token>/', auth_views.PasswordResetConfirmView.as_view(template_name='registration/password_reset_confirmation.html'), name='password_reset_confirm'),
     path('password_reset_finish/', auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_finish.html'), name='password_reset_complete'),
