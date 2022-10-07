@@ -51,8 +51,6 @@ INSTALLED_APPS = [
     
     'accounts.apps.AccountsConfig',
     'shift.apps.ShiftConfig',
-    'allauth', 
-    'allauth.account',
 ]
 
 MIDDLEWARE = [
