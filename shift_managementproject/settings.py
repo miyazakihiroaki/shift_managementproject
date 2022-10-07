@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'widget_tweaks',
+    'storages',
     
     'accounts.apps.AccountsConfig',
     'shift.apps.ShiftConfig',
@@ -189,3 +190,11 @@ EMAIL_HOST_USER = 'apikey' # this is exactly the value 'apikey'
 EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
+
+#AMAZON S3
+AWS_S3_SESSION_PROFILE = 'AKIA5NIUPSXYYBPLB37Y'
+AWS_S3_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'shift-management'
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
