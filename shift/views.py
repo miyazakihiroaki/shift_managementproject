@@ -362,7 +362,7 @@ class ManagerPageView(LoginRequiredMixin, View):
         }
         # print(calendar1)
         
-        return render(request, 'shift/manager_mypage.html',context )
+        return render(request, 'shift/manager/manager_mypage.html',context )
 
         
 def shift_detail(request, year, month, day, hour_minute):
@@ -377,7 +377,7 @@ def shift_detail(request, year, month, day, hour_minute):
         'form':form
     }
     
-    return render(request, 'shift/shift_detail.html',context )
+    return render(request, 'shift/manager/shift_detail.html',context )
 
 
 class Staff_Shift(LoginRequiredMixin, View):
@@ -478,12 +478,12 @@ class Staff_Shift(LoginRequiredMixin, View):
         path = get_path(request)
         if "view_only" in path:
             if self.request.user.category == 1:
-                return render(request, 'shift/manager_detail_mypage_view_only.html',context )
+                return render(request, 'shift/manager/manager_detail_mypage_view_only.html',context )
             else:
                 return render(request, 'shift/shift_view_only.html',context )                
         
         else:
-            return render(request, 'shift/manager_detail_mypage.html',context )                
+            return render(request, 'shift/manager/manager_detail_mypage.html',context )                
 
 
 @login_required
@@ -495,7 +495,7 @@ def select_staff(request):
     }
     
     if staff_data.category == 1:
-        return render(request, 'shift/manager_select_staff.html', context)
+        return render(request, 'shift/manager/manager_select_staff.html', context)
     else :
         return render(request, 'shift/select_staff.html', context)
         
