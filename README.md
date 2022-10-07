@@ -1,6 +1,6 @@
 # shift_managementproject（シフト管理システム）
 
-## [こちら]([URL](https://shiftmanagementsystem.herokuapp.com/))からどうぞ
+## [こちら](https://shiftmanagementsystem.herokuapp.com/)からどうぞ
 
 ## テストユーザー<br>
 スタッフ<br>
