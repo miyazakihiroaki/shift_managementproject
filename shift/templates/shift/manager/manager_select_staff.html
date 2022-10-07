@@ -2,14 +2,10 @@
 {% block title %}店長専用ページ_スタッフ選択{% endblock%}
 
 {% block content %}
+<h1 class="text-center">スタッフ選択</h1>
 <div class="text-center my-5">
-    <div class="mb-3">
-        <h1>スタッフ選択</h1>
-    </div>
-
     <div class="m-4 bg-light border border-success rounded">
     {% for object in staff_name_datas %}
-        
         <div class="row w-100">
             {% if object.category == 1 %}
             <li class="text-left list-group-item list-unstyled col border-bottom">店長</li>

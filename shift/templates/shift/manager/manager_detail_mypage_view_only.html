@@ -2,13 +2,12 @@
 {% block title %}店長専用ページ_個別シフト状況{% endblock%}
 
 {% block content %}
+<div class="text-center">
+    <h1>{{staff_name_data}}のシフト状況</h1>
+    <p>{{ start_day }}～{{ end_day }}</p>
+    <a class="btn btn-warning" href="{% url 'shift:staff_shift' staff_id year month day %}">編集する</a>
+</div>
 <div class="text-center my-5">
-    <div class="mb-3">
-        <h1>{{staff_name_data}}のシフト状況</h1>
-        <p>{{ start_day }}～{{ end_day }}</p>
-        <a class="btn btn-warning" href="{% url 'shift:staff_shift' staff_id year month day %}">編集する</a>
-    </div>
-
     <div class="d-flex mb-2">
         <div class="mx-3 mr-auto">
             <a class="btn btn-success" href="{% url 'shift:manager_staff_shift_view_only' staff_id before_month.year before_month.month before_month.day %}">4週前</a>
