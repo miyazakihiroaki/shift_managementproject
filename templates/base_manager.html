@@ -22,32 +22,32 @@
             <div class="collapse navbar-collapse" id="responsiveMenu">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'shift:reverse' %}">シフト状況概要</a>
+                        <a class="nav-link" href="{% url 'reverse' %}">シフト状況概要</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'shift:manager_select_staff' %}">シフト状況詳細</a> 
+                        <a class="nav-link" href="{% url 'manager_select_staff' %}">シフト状況詳細</a> 
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'accounts:manager-clerklist' %}">店員一覧</a> 
+                        <a class="nav-link" href="{% url 'manager-clerklist' %}">店員一覧</a> 
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'accounts:profile' %}">登録情報</a> 
+                        <a class="nav-link" href="{% url 'profile' %}">登録情報</a> 
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'shift:shop_info' %}">店舗情報</a> 
+                        <a class="nav-link" href="{% url 'shop_info' %}">店舗情報</a> 
                     </li>
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     {% if request.user.is_authenticated %}
                     <li class="nav-item text-right">
-                        <a class="nav-link" href="{% url 'accounts:logout' %}">ログアウト</a>
+                        <a class="nav-link" href="{% url 'logout' %}">ログアウト</a>
                     </li>
                     {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'accounts:login' %}">ログイン</a>
+                        <a class="nav-link" href="{% url 'login' %}">ログイン</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'shift:shop_info' %}">店舗情報</a>
+                        <a class="nav-link" href="{% url 'shop_info' %}">店舗情報</a>
                     </li>
                     {% endif %}
                 </ul>

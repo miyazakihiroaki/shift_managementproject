@@ -3,9 +3,6 @@ from django.contrib.auth.views import LoginView, LogoutView
 
 from . import views
 
-
-app_name = 'shift'
-
 urlpatterns = [
     path('', views.Login.as_view(), name="login"),
     path('reserve/', views.ReverseView.as_view(), name='reverse'),

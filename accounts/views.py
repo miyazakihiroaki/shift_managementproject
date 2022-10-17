@@ -47,7 +47,7 @@ def signup(request):
                     fail_silently=False,
                 )
             
-            return redirect('accounts:finish-signup')      
+            return redirect('finish-signup')      
     return render(request, 'accounts/sigup.html')
 
 
@@ -129,7 +129,7 @@ class UpdateProfileView(LoginRequiredMixin, UpdateView):
     model = Userr
     fields = ('clerkname', 'email', 'personalimage', 'introduction_text')
     template_name = 'accounts/profile_edit.html'
-    success_url = reverse_lazy('accounts:profile')
+    success_url = reverse_lazy('profile')
     
 
 # class PasswordResetView(views.PasswordResetView):

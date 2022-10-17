@@ -9,12 +9,12 @@
 <div class="text-center my-5">
     <div class="d-flex mb-2">
         <div class="mx-3 mr-auto">
-            <a class="btn btn-success" href="{% url 'shift:staff_shift' staff_id before_month.year before_month.month before_month.day %}">4週前</a>
-            <a class="btn btn-success" href="{% url 'shift:staff_shift' staff_id before.year before.month before.day %}">前週</a>
+            <a class="btn btn-success" href="{% url 'staff_shift' staff_id before_month.year before_month.month before_month.day %}">4週前</a>
+            <a class="btn btn-success" href="{% url 'staff_shift' staff_id before.year before.month before.day %}">前週</a>
         </div>
         <div class="mx-3">
-            <a class="btn btn-success" href="{% url 'shift:staff_shift' staff_id next.year next.month next.day %}">次週</a>
-            <a class="btn btn-success" href="{% url 'shift:staff_shift' staff_id next_month.year next_month.month next_month.day %}">4週後</a>
+            <a class="btn btn-success" href="{% url 'staff_shift' staff_id next.year next.month next.day %}">次週</a>
+            <a class="btn btn-success" href="{% url 'staff_shift' staff_id next_month.year next_month.month next_month.day %}">4週後</a>
         </div>
     </div>
     <div class="mb-3 table-responsive">
@@ -44,7 +44,7 @@
                         <p class="mb-0 font-weight-bold text-success">既定人数到達 </p>
                         <p class="mb-0 font-weight-bold text-success">出勤</p>
                         <form method="POST"
-                            action="{% url 'shift:manager_delete' staff_id datetime.year datetime.month datetime.day booking_hour_minute %}">
+                            action="{% url 'manager_delete' staff_id datetime.year datetime.month datetime.day booking_hour_minute %}">
                             {% csrf_token %}
                             <button class="btn btn-outline-danger" type="submit">取消</button>
                         </form>    
@@ -54,13 +54,13 @@
                         {% elif book.attend == "出勤" %}
                         <p class="mb-0 font-weight-bold text-success">出勤</p>
                         <form method="POST"
-                            action="{% url 'shift:manager_delete' staff_id datetime.year datetime.month datetime.day booking_hour_minute %}">
+                            action="{% url 'manager_delete' staff_id datetime.year datetime.month datetime.day booking_hour_minute %}">
                             {% csrf_token %}
                             <button class="btn btn-outline-danger" type="submit">取消</button>
                         </form>
                         {% elif book.attend == ''%}
                         <form method="POST"
-                            action="{% url 'shift:manager_holiday' staff_id datetime.year datetime.month datetime.day booking_hour_minute %}">
+                            action="{% url 'manager_holiday' staff_id datetime.year datetime.month datetime.day booking_hour_minute %}">
                             {% csrf_token %}
                             <button class="btn btn-outline-success" type="submit">
                                 {% comment %} 出勤しない {% endcomment %}

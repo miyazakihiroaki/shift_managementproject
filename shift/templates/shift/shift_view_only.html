@@ -10,12 +10,12 @@
 
     <div class="d-flex mb-2">
         <div class="mx-3 mr-auto">
-            <a class="btn btn-success" href="{% url 'shift:staff_shift_view_only' staff_id before_month.year before_month.month before_month.day %}">4週前</a>
-            <a class="btn btn-success" href="{% url 'shift:staff_shift_view_only' staff_id before.year before.month before.day %}">前週</a>
+            <a class="btn btn-success" href="{% url 'staff_shift_view_only' staff_id before_month.year before_month.month before_month.day %}">4週前</a>
+            <a class="btn btn-success" href="{% url 'staff_shift_view_only' staff_id before.year before.month before.day %}">前週</a>
         </div>
         <div class="mx-3">
-            <a class="btn btn-success" href="{% url 'shift:staff_shift_view_only' staff_id next.year next.month next.day %}">次週</a>
-            <a class="btn btn-success" href="{% url 'shift:staff_shift_view_only' staff_id next_month.year next_month.month next_month.day %}">4週後</a>
+            <a class="btn btn-success" href="{% url 'staff_shift_view_only' staff_id next.year next.month next.day %}">次週</a>
+            <a class="btn btn-success" href="{% url 'staff_shift_view_only' staff_id next_month.year next_month.month next_month.day %}">4週後</a>
         </div>
     </div>
     <div class="mb-3 table-responsive">

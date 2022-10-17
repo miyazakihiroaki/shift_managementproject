@@ -153,14 +153,14 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_URL = 'accounts:login'
+LOGIN_URL = 'login'
 
-LOGOUT_URL = 'accounts:logout'
+LOGOUT_URL = 'logout'
 
 # LOGIN_REDIRECT_URL = 'accounts:login_redirect'
-LOGIN_REDIRECT_URL = 'shift:reverse'
+LOGIN_REDIRECT_URL = 'reverse'
 
-LOGOUT_REDIRECT_URL = 'accounts:login'
+LOGOUT_REDIRECT_URL = 'login'
 
 #自ら定義したモデルを認証に使用する
 AUTH_USER_MODEL = 'accounts.Userr'

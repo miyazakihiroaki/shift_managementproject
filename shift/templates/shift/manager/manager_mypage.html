@@ -11,12 +11,12 @@
 <div class="text-center my-5">
     <div class="d-flex mb-2">
         <div class="mx-3 mr-auto">
-            <a class="btn btn-success" href="{% url 'shift:manager_page' before_month.year before_month.month before_month.day %}">4週前</a>
-            <a class="btn btn-success" href="{% url 'shift:manager_page' before.year before.month before.day %}">前週</a>
+            <a class="btn btn-success" href="{% url 'manager_page' before_month.year before_month.month before_month.day %}">4週前</a>
+            <a class="btn btn-success" href="{% url 'manager_page' before.year before.month before.day %}">前週</a>
         </div>
         <div class="mx-3">
-            <a class="btn btn-success" href="{% url 'shift:manager_page' next.year next.month next.day %}">次週</a>
-            <a class="btn btn-success" href="{% url 'shift:manager_page' next_month.year next_month.month next_month.day %}">4週後</a>
+            <a class="btn btn-success" href="{% url 'manager_page' next.year next.month next.day %}">次週</a>
+            <a class="btn btn-success" href="{% url 'manager_page' next_month.year next_month.month next_month.day %}">4週後</a>
         </div>
     </div>
     <div class="mb-3 table-responsive">
@@ -42,7 +42,7 @@
                         {% if book.opacity == 0 %}
                         <div>   
                             <form method="POST"
-                                action="{% url 'shift:shift_detail' datetime.year datetime.month datetime.day booking_hour_minute %}">
+                                action="{% url 'shift_detail' datetime.year datetime.month datetime.day booking_hour_minute %}">
                                 {% csrf_token %}
                                 {% if book.number == "既定人数到達" %}
                                 <button class="btn btn-outline-dark w-100" type="submit">
@@ -58,7 +58,7 @@
                         {% else %}
                         <div class= "bg-warning bg-opacity-{{book.opacity}} ">   
                             <form method="POST"
-                                action="{% url 'shift:shift_detail' datetime.year datetime.month datetime.day booking_hour_minute %}">
+                                action="{% url 'shift_detail' datetime.year datetime.month datetime.day booking_hour_minute %}">
                                 {% csrf_token %}
                                 <button class="btn btn-outline-dark w-100" type="submit">{{book.number}}</button>
                             </form>

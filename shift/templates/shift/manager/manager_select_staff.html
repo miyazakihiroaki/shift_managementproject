@@ -13,7 +13,7 @@
             <li class="text-left list-group-item list-unstyled col border-bottom">スタッフ</li>
             {% endif %}
             <li class="text-left list-group-item list-unstyled col border-bottom">{{object.clerkname}}</li>
-            <a class="btn btn-outline-success col" href="{% url 'shift:staff_reverse' object.id %}">閲覧</a>
+            <a class="btn btn-outline-success col" href="{% url 'staff_reverse' object.id %}">閲覧</a>
         </div>
     {% endfor %}
     </div>

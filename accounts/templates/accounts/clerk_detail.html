@@ -11,7 +11,7 @@
         <img class="d-block mx-auto img-fluid" src="{{ object.personalimage.url }}" class="img-thumbnail"/>
         <h4 class="text-dark text-break">メールアドレス：{{object.email}}</h4>
         <p>{{ object.introduction_text }}</p>
-        <a href="{% url 'accounts:clerklist' %}" class="btn btn-success"> 一覧へ </a>
+        <a href="{% url 'clerklist' %}" class="btn btn-success"> 一覧へ </a>
     </div>
 {% endblock content %}
 

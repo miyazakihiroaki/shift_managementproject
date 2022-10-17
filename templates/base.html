@@ -22,35 +22,35 @@
             <div class="collapse navbar-collapse" id="responsiveMenu">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'shift:reverse' %}">トップ</a>
+                        <a class="nav-link" href="{% url 'reverse' %}">トップ</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'accounts:clerklist' %}">店員一覧</a> 
+                        <a class="nav-link" href="{% url 'clerklist' %}">店員一覧</a> 
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'shift:select_staff' %}">シフト閲覧</a> 
+                        <a class="nav-link" href="{% url 'select_staff' %}">シフト閲覧</a> 
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'shift:salary_reverse' %}">給料計算</a> 
+                        <a class="nav-link" href="{% url 'salary_reverse' %}">給料計算</a> 
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'accounts:profile' %}">登録情報</a> 
+                        <a class="nav-link" href="{% url 'profile' %}">登録情報</a> 
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'shift:shop_info' %}">店舗情報</a> 
+                        <a class="nav-link" href="{% url 'shop_info' %}">店舗情報</a> 
                     </li>
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     {% if request.user.is_authenticated %}
                     <li class="nav-item text-right">
-                        <a class="nav-link" href="{% url 'accounts:logout' %}">ログアウト</a>
+                        <a class="nav-link" href="{% url 'logout' %}">ログアウト</a>
                     </li>
                     {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'accounts:login' %}">ログイン</a>
+                        <a class="nav-link" href="{% url 'login' %}">ログイン</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'accounts:signup' %}">新規会員登録</a>
+                        <a class="nav-link" href="{% url 'signup' %}">新規会員登録</a>
                     </li>
                     {% endif %}
                 </ul>

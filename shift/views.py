@@ -61,7 +61,7 @@ class ReverseView(View):
                 # カレンダー日曜日開始
                 if weekday != 6:
                     start_date = start_date - timedelta(days=weekday + 1)
-                return redirect('shift:mypage', start_date.year, start_date.month, start_date.day)
+                return redirect('mypage', start_date.year, start_date.month, start_date.day)
             
             elif self.request.user.category == 1:
                 start_date = date.today()
@@ -70,7 +70,7 @@ class ReverseView(View):
                 # カレンダー日曜日開始
                 if weekday != 6:
                     start_date = start_date - timedelta(days=weekday + 1)
-                return redirect('shift:manager_page', start_date.year, start_date.month, start_date.day)
+                return redirect('manager_page', start_date.year, start_date.month, start_date.day)
     
         else:
             user_data = None
@@ -197,7 +197,7 @@ def Holiday(request, year, month, day, hour_minute):
     # カレンダー日曜日開始
     if weekday != 6:
         start_date = start_date - timedelta(days=weekday + 1)
-    return redirect('shift:mypage', year=start_date.year, month=start_date.month, day=start_date.day)
+    return redirect('mypage', year=start_date.year, month=start_date.month, day=start_date.day)
 
 
 #出勤時間消去
@@ -217,7 +217,7 @@ def Delete(request, year, month, day, hour_minute):
     # カレンダー日曜日開始
     if weekday != 6:
         start_date = start_date - timedelta(days=weekday + 1)
-    return redirect('shift:mypage', year=start_date.year, month=start_date.month, day=start_date.day)
+    return redirect('mypage', year=start_date.year, month=start_date.month, day=start_date.day)
 
 
 #給料計算
@@ -278,7 +278,7 @@ class SalaryReverseView(LoginRequiredMixin, View):
                 # カレンダー日曜日開始
                 if weekday != 6:
                     start_date = start_date - timedelta(days=weekday + 1)
-                return redirect('shift:calculate_salary', start_date.year, start_date.month)
+                return redirect('calculate_salary', start_date.year, start_date.month)
     
         else:
             user_data = None
@@ -514,9 +514,9 @@ class StaffReverseView(View):
         if weekday != 6:
             start_date = start_date - timedelta(days=weekday + 1)
             if self.request.user.category == 1:
-                return redirect('shift:manager_staff_shift_view_only', id, start_date.year, start_date.month, start_date.day)            
+                return redirect('manager_staff_shift_view_only', id, start_date.year, start_date.month, start_date.day)            
             else:    
-                return redirect('shift:staff_shift_view_only', id, start_date.year, start_date.month, start_date.day)            
+                return redirect('staff_shift_view_only', id, start_date.year, start_date.month, start_date.day)            
         
         return render(request, 'shift/home.html')
     
@@ -539,7 +539,7 @@ def Manager_Holiday(request, pk, year, month, day, hour_minute):
     # カレンダー日曜日開始
     if weekday != 6:
         start_date = start_date - timedelta(days=weekday + 1)
-    return redirect('shift:staff_shift', pk , start_date.year, start_date.month, start_date.day)
+    return redirect('staff_shift', pk , start_date.year, start_date.month, start_date.day)
 
 
 @require_POST
@@ -558,6 +558,6 @@ def Manager_Delete(request, pk, year, month, day, hour_minute):
     # カレンダー日曜日開始
     if weekday != 6:
         start_date = start_date - timedelta(days=weekday + 1)
-    return redirect('shift:staff_shift', pk, start_date.year, start_date.month, start_date.day)
+    return redirect('staff_shift', pk, start_date.year, start_date.month, start_date.day)
 
 

@@ -14,7 +14,7 @@
         <img src="{{ item.personalimage.url }}" class="img-thumbnail img-fluid"/>
         {% endif %}
         <div class="mt-3">
-            <a href="{% url 'accounts:clerkdetail' item.pk %}" class="btn btn-success"> 詳細へ </a>
+            <a href="{% url 'clerkdetail' item.pk %}" class="btn btn-success"> 詳細へ </a>
         </div>
     </div>
     {% endfor %}
