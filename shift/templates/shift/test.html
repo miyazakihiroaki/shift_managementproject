@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% comment %} <p>シフトデータ{{ shift_datas }}</p> {% endcomment %}
+    {% for shift_data in all_shift_datas %}
+        {{shift_data.user.clerkname}}
+    {% endfor %}
+    <p>店員名リスト{{clerkname_id_list}}</p>
+{% endblock content %}

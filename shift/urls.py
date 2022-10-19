@@ -14,6 +14,9 @@ urlpatterns = [
     path('mypage/salary_reserve/', views.SalaryReverseView.as_view(), name='salary_reverse'),
     path('select_staff/',views.select_staff, name ='select_staff'),
     path('staff_shift/<int:pk>/<int:year>/<int:month>/<int:day>/view_only/',views.Staff_Shift.as_view(), name ='staff_shift_view_only'),
+    
+    # path('test/', views.test, name="test"),
+    
 
     
     #店長専用ページ
