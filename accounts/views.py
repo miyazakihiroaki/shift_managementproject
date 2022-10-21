@@ -47,8 +47,11 @@ def signup(request):
                     fail_silently=False,
                 )
             
-            return redirect('finish-signup')      
-    return render(request, 'accounts/sigup.html')
+            return redirect('finish-signup')
+        # else:
+        #実装      
+    # return render(request, 'accounts/sigup.html')
+    return
 
 
 # 新規登録完了画面
