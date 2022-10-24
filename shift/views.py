@@ -544,7 +544,7 @@ class StaffReverseView(View):
         id = self.kwargs.get('pk')
         
         start_date = date.today()
-        start_date = start_date + timedelta(days=28)
+        # start_date = start_date + timedelta(days=28)
         weekday = start_date.weekday()
         # カレンダー日曜日開始
         if weekday != 6:
