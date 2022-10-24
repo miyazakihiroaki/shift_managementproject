@@ -1,3 +1,4 @@
+from logging import warning
 from django.contrib.auth import views as auth_views
 from django.views import View
 from django.shortcuts import render, redirect
@@ -10,6 +11,9 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse, reverse_lazy
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
+from django.shortcuts import render
+from .forms import LoginForm
+from django.contrib.auth import authenticate, login
 # from allauth.account import views
 
 import os 
@@ -48,10 +52,10 @@ def signup(request):
                 )
             
             return redirect('finish-signup')
-        # else:
-        #実装      
-    # return render(request, 'accounts/sigup.html')
-    return
+        else:
+            return render(request, 'accounts/sigup.html')
+    return render(request, 'accounts/sigup.html')
+    # return None
 
 
 # 新規登録完了画面
@@ -153,3 +157,37 @@ class UpdateProfileView(LoginRequiredMixin, UpdateView):
 
 # class PasswordChangeView(views.PasswordChangeView):
 #     template_name = 'accounts/password_change.html'
+
+
+#ログイン本物
+def login_view(request):
+    print("あ")
+    warning = {}
+    if request.method == 'POST':
+        form = LoginForm(request, data=request.POST)
+
+        if form.is_valid():
+            user = form.get_user()
+
+            if user:
+                print('ログイン成功')
+                login(request, user)    
+                return redirect('reverse')
+        
+            # else:
+            #     warning["error"] = "メールアドレスとパスワードが一致しません"
+            #     print('ログイン失敗')s
+
+        else:
+                warning["error"] = "メールアドレスとパスワードが一致しません"
+                print('ログイン失敗')
+        
+    else:
+        form = LoginForm()
+
+    context = {
+        'warning': warning,
+    }
+
+    return render(request, 'accounts/login.html', context)
+    # return render(request, 'accounts/login.html')

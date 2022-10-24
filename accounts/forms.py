@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import AuthenticationForm
 from django import forms
 
 from .models import Userr
@@ -29,3 +30,8 @@ class ProfileForm(forms.Form):
     email = forms.EmailField(max_length=250, label='メールアドレス')
     introduction_text = forms.CharField(label='自己紹介', widget=forms.Textarea(), required=False)
     personalimage = forms.ImageField(required=False)
+
+
+##ログインview時に使用##
+class LoginForm(AuthenticationForm):
+    pass

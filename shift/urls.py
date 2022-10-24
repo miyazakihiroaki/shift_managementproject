@@ -2,9 +2,11 @@ from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
 
 from . import views
+from accounts import views as accounts_views
 
 urlpatterns = [
-    path('', views.Login.as_view(), name="login"),
+    path('', accounts_views.login_view, name="login"),
+    # path('', views.Login.as_view(), name="login"),
     path('reserve/', views.ReverseView.as_view(), name='reverse'),
     path('shop_info/', views.shop_info, name="shop_info"),
     path('mypage/<int:year>/<int:month>/<int:day>/', views.MyPageView.as_view(), name='mypage'),
