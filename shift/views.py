@@ -288,6 +288,12 @@ class CalculateSalary(LoginRequiredMixin, View):
         shifts_count = shifts.count()
         salary = shifts_count*user.hourly_wage
         
+        ##################################test###############################
+        from . import graph
+        x = [1,2,3,4,5,6,7,8,9,10]
+        y = [1,2,3,4,5,6,7,8,9,10]
+        chart = graph.Plot_Graph(x,y)
+        
         context = {
             'year':year,
             'month':month,
@@ -295,7 +301,8 @@ class CalculateSalary(LoginRequiredMixin, View):
             'shifts_count': shifts_count, 
             'salary':salary, 
             'next_date': next_date,
-            'before_date': before_date
+            'before_date': before_date,
+            'chart': chart,
         }
         
         return render(request, 'shift/calculatesalary.html',context)

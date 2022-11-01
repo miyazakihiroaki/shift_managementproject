@@ -1,3 +1,4 @@
+import japanize_matplotlib
 import matplotlib.pyplot as plt
 import base64
 from io import BytesIO
@@ -18,8 +19,8 @@ def Plot_Graph(x,y):
 	plt.switch_backend("AGG")        #スクリプトを出力させない
 	plt.figure(figsize=(10,5))       #グラフサイズ
 	plt.bar(x,y)                     #グラフ作成
-	plt.xticks(rotation=45)          #X軸値を45度傾けて表示
-	plt.title("Revenue per Date")    #グラフタイトル
+	# plt.xticks(rotation=45)          #X軸値を45度傾けて表示
+	plt.title("給料推移")    #グラフタイトル
 	plt.xlabel("Date")               #xラベル
 	plt.ylabel("Reveue")             #yラベル
 	plt.tight_layout()               #レイアウト
